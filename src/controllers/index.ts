@@ -1,5 +1,3 @@
 import AuthController from './auth.controller';
 
-export {
-  AuthController
-};
+export { AuthController };

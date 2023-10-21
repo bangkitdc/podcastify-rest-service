@@ -7,6 +7,7 @@
     "start:prod": "npm ts-node ./src/servert.s --transpile-only",
     "dev": "nodemon -L ./src/server.ts",
     "prettier-format": "prettier --config .prettierrc \"src/**/*.ts\" --write",
+    "lint": "eslint \"src/**/*.ts\"",
     "prisma:generate": "prisma generate"
   },
   "prisma": {
@@ -22,16 +23,21 @@
     "@prisma/client": "^5.4.2",
     "axios": "^1.5.1",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
     "prisma": "^5.4.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.15",
     "@types/express": "^4.17.20",
     "@types/node": "^20.8.7",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
+    "eslint": "^8.52.0",
     "nodemon": "^3.0.1",
-    "prettier": "2.7.1",
+    "prettier": "^3.0.3",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "tslib": "^2.6.2",

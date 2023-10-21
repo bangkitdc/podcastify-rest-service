@@ -12,4 +12,4 @@ CMD [ "npx", "run", "prisma:generate" ]
 
 EXPOSE 4444
 
-CMD [ "npm", "run", "start:dev" ]
+CMD [ "npm", "run", "dev" ]

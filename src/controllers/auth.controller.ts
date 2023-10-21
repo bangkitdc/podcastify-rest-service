@@ -1,16 +1,11 @@
 import { Request, Response } from 'express';
 
 class AuthController {
-  constructor() {
-
-  }
+  constructor() {}
 
   async login(req: Request, res: Response) {
     try {
-      
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   }
 }
 

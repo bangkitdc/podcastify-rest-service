@@ -8,7 +8,7 @@ const app = express();
 const whitelist = ['http://localhost:3000'];
 app.use(
   cors({
-    origin: whitelist
+    origin: whitelist,
   }),
 );
 
