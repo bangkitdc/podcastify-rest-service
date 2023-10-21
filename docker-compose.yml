@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  podcastify-rest-service-app:
+    container_name: podcastify-rest-service-app
+    hostname: podcastify-rest-service-app
+    build: .
+    volumes:
+      - ./src:/app/src
+      - node_modules:/app/node_modules
+    env_file:
+      - .env
+    ports:
+      - '4444:4444'
+    networks:
+      - podcastify-rest
+    depends_on:
+      - podcastify-rest-service-db
+
+  podcastify-rest-service-db:
+    container_name: podcastify-rest-service-db
+    image: postgres:13.9-alpine3.17
+    hostname: podcastify-rest-service-db
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - 5432:5432
+    networks:
+      - podcastify-rest
+
+  podcastify-rest-service-cache:
+    image: redis:alpine3.17
+    container_name: podcastify-rest-service-cache
+    hostname: podcastify-rest-service-cache
+    volumes:
+      - ./cache:/data
+    env_file:
+      - .env
+    ports:
+      - 6379:6379
+    networks:
+      - podcastify-rest
+
+volumes:
+  pgdata:
+    driver: local
+  cache:
+    driver: local
+  node_modules:
+
+networks:
+  podcastify-rest:
