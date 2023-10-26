@@ -1,15 +1,17 @@
-FROM node:lts-alpine3.17
+FROM node:19.9.0
 
 WORKDIR /app
 
 COPY package*.json ./
+
 RUN npm install
 
 COPY . ./
 
 # RUN npx prisma generate
-CMD [ "npx", "run", "prisma:generate" ]
+RUN npx prisma generate
+
+# Start application
+CMD [ "npm", "run", "dev" ]
 
 EXPOSE 4444
-
-CMD [ "npm", "run", "dev" ]

@@ -6,7 +6,6 @@ services:
     build: .
     volumes:
       - ./src:/app/src
-      - node_modules:/app/node_modules
     env_file:
       - .env
     ports:
@@ -14,14 +13,21 @@ services:
     networks:
       - podcastify-rest
     depends_on:
-      - podcastify-rest-service-db
-
+      podcastify-rest-service-db:
+        condition: service_healthy
+      podcastify-rest-service-cache:
+        condition: service_started
   podcastify-rest-service-db:
     container_name: podcastify-rest-service-db
     image: postgres:13.9-alpine3.17
     hostname: podcastify-rest-service-db
     volumes:
       - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+      interval: 10s
+      timeout: 3s
+      retries: 5
     env_file:
       - .env
     ports:
@@ -47,7 +53,6 @@ volumes:
     driver: local
   cache:
     driver: local
-  node_modules:
 
 networks:
   podcastify-rest:
