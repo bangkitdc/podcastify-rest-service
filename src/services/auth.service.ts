@@ -7,13 +7,14 @@ import { IUserService } from '../types/user';
 import { HttpStatusCode } from '../types/http';
 import { HttpError } from '../helpers';
 import { jwtSecretKey, jwtTimeExpiration } from '../configs/jwt';
+import { UserService } from '.';
 
 class AuthService implements IAuthService {
   private userService: IUserService;
   private userModel = prisma.user;
 
-  constructor(userService: IUserService) {
-    this.userService = userService;
+  constructor() {
+    this.userService = new UserService();
   }
 
   async login(username: string, password: string) {
@@ -30,7 +31,6 @@ class AuthService implements IAuthService {
     if (!isValidPassword) {
       throw new HttpError(HttpStatusCode.Unauthorized, 'Invalid credentials');
     }
-
 
     // Make token
     const accessToken = jwt.sign(
