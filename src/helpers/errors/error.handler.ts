@@ -4,6 +4,7 @@ import { ZodError } from 'zod';
 import { ResponseHelper, HttpError } from '..';
 import { HttpStatusCode } from '../../types/http';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { PrismaErrorForeignKeyConstraint, PrismaErrorUniqueConstraint } from '../../types/error';
 
 abstract class ErrorHandler {
   protected nextHandler?: ErrorHandler;
@@ -23,6 +24,7 @@ abstract class ErrorHandler {
         res,
         HttpStatusCode.InternalServerError,
         'Internal server error',
+        error as object
       );
     }
   }
@@ -77,18 +79,30 @@ class ZodErrorHandler extends ErrorHandler {
   }
 }
 
-class PrismaClientKnownRequestErrorHandler extends ErrorHandler { // TO BE CONTINUED: cuman bisa nge catch 1 exception doang jelek
+class PrismaClientKnownRequestErrorHandler extends ErrorHandler {
+  // THINGS TO NOTICE: cuman bisa nge catch 1 exception
+
   protected canHandle(error: unknown): boolean {
     return error instanceof PrismaClientKnownRequestError;
+  }
+
+  protected capitalizeFirstLetter(word: string): string {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  }
+
+  protected formatConstraintName(name: string): string {
+    const words = name.split('_');
+    const formattedWords = words.map((word) => this.capitalizeFirstLetter(word));
+    return formattedWords.join(' ');
   }
 
   protected getResponse(
     jsonResponse: Response,
     error: PrismaClientKnownRequestError,
   ): Response {
-    // let message = 'Internal server error';
-    // let code = HttpStatusCode.InternalServerError;
-    // const errors: Record<string, string[]> = {};
+    let message = 'Internal server error';
+    let code = HttpStatusCode.InternalServerError;
+    let errors: Record<string, string[]> | null = {};
 
     switch (error.code) {
       case 'P2001': { // Not exist constraint
@@ -96,41 +110,56 @@ class PrismaClientKnownRequestErrorHandler extends ErrorHandler { // TO BE CONTI
         break;
       }
 
-      case 'P2002': { // Unique constraint
-        // const matches = error.message.match(
-        //   /Unique constraint failed on (.*?)\./g,
-        // );
-        
-        // if (matches) {
-        //   matches.forEach((match) => {
-        //     const constraintMatch = match.match(/Unique constraint failed on (.*?)\./);
-        //     if (constraintMatch && constraintMatch[1]) {
-        //       const constraintName = constraintMatch[1];
+      case 'P2002': { // Unique constraint        
+        if (error.meta && error.meta.target) {
+          const constraintName = (error as PrismaErrorUniqueConstraint).meta.target[0];
 
-        //       if (!errors[constraintName]) {
-        //         errors[constraintName] = [];
-        //       }
+          if (!errors[constraintName]) {
+            errors[constraintName] = [];
+          }
 
-        //       errors[constraintName].push(`${constraintName} already exists`);
-        //     }
-        //   });
-        // }
+          errors[constraintName].push(`${this.formatConstraintName(constraintName)} already exists`);
 
-        // code = HttpStatusCode.Conflict;
-        // message = 'Operation failed, please check your request again'
+          code = HttpStatusCode.Conflict;
+          message = 'Operation failed, please check your request again';
+        }
+        break;
+      }
+
+      case 'P2003': { // Foreign key constraint
+        if (error.meta) {
+          const fieldName = (error as PrismaErrorForeignKeyConstraint).meta.field_name.match(/_(.+)_fkey/);
+
+          if (fieldName) {
+            const constraintName = fieldName[1];
+
+            if (!errors[constraintName]) {
+              errors[constraintName] = [];
+            }
+            
+            errors[constraintName].push(`${this.formatConstraintName(constraintName)} is not exists`);
+          }
+
+          code = HttpStatusCode.Conflict;
+          message = 'Operation failed, please check your request again';
+        }
         break;
       }
 
       default:
-        // message = error.message;
+        message = error.message;
         break;
+    }
+
+    if (Object.keys(errors).length === 0) {
+      errors = null;
     }
 
     return ResponseHelper.responseError(
       jsonResponse, 
-      HttpStatusCode.InternalServerError, 
-      error.message,
-      error
+      code, 
+      message,
+      errors
     );
   }
 }

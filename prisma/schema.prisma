@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_LOCAL_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Role {
@@ -28,7 +28,7 @@ model User {
   updated_at      DateTime  @updatedAt
   
   role            Role      @relation(fields: [role_id], references: [role_id])
-  podcasts        Podcast[]
+  episodes        Episode[]
 }
 
 model Category {
@@ -37,36 +37,23 @@ model Category {
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
 
-  podcasts        Podcast[]
-}
-
-model Podcast {
-  podcast_id      Int       @id @default(autoincrement())
-  title           String    @unique @db.VarChar(255)
-  description     String    @db.VarChar(255)
-  creator_id      Int       
-  image_url       String?   @db.VarChar(255)
-  category_id     Int
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-
-  category        Category  @relation(fields: [category_id], references: [category_id])
-  user            User      @relation(fields: [creator_id], references: [user_id])
   episodes        Episode[]
 }
 
 model Episode {
   episode_id      Int       @id @default(autoincrement())
-  podcast_id      Int
   title           String    @unique @db.VarChar(255)
   description     String    @db.VarChar(255)
+  creator_id      Int       
+  category_id     Int
   duration        Int       
   image_url       String?   @db.VarChar(255)
   audio_url       String    @db.VarChar(255)
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
 
-  podcast         Podcast   @relation(fields: [podcast_id], references: [podcast_id])
+  category        Category  @relation(fields: [category_id], references: [category_id])
+  user            User      @relation(fields: [creator_id], references: [user_id])
   episodeLikes    EpisodeLike[]
   episodeComments EpisodeComment[]
 }

@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import { genSalt, hash } from 'bcryptjs';
+import { IEpisodeForm } from '../src/types/episode';
+import { IUserForm } from '../src/types/user';
 
 const prisma = new PrismaClient();
 
@@ -27,35 +29,59 @@ const createCategorySeeds = (count: number) => {
   return categorySeeds;
 }
 
-const PODCAST_SEED_SIZE = 15;
-const EPISODE_PER_PODCAST_SEED_SIZE = 2;
+const CREATOR_SEED_SIZE = 10;
 
-const createPodcastSeeds = (count: number, creatorId: number) => {
-  const podcastSeeds = [];
+const createCreatorSeeds = (count: number, hashedPass: string) => {
+  const creatorSeeds: IUserForm[] = [];
 
-  for (let i = 0; i < count; i++) {
-    podcastSeeds.push({
-      title: faker.music.songName(),
-      description: faker.lorem.paragraph(),
-      creator_id: creatorId,
-      category_id: Math.floor(Math.random() * CATEGORY_SEED_SIZE) + 1
-    })
+  while (creatorSeeds.length < count) {
+    const random = Math.random() < 0.5;
+    const sex = random ? "female" : "male";
+
+    const firstName = faker.person.firstName(sex);
+    const lastName = faker.person.lastName(sex);
+    const email = faker.internet.email({ firstName: firstName, lastName: lastName });
+    const username = faker.person.fullName({ firstName: firstName, lastName: lastName });
+
+    const isUnique = !creatorSeeds.some(seed => seed.email === email || seed.username === username);
+    
+    if (isUnique) {
+      creatorSeeds.push({
+        email: email,
+        username: username,
+        first_name: firstName,
+        last_name: lastName,
+        password: hashedPass
+      });
+    }
   }
 
-  return podcastSeeds;
+  return creatorSeeds;
 }
 
-const createEpisodeSeeds = (count: number, podcastId: number) => {
-  const episodeSeeds = [];
+const EPISODE_PER_CREATOR_SEED_SIZE = 3;
 
-  for (let i = 0; i < count; i++) {
-    episodeSeeds.push({
-      podcast_id: podcastId,
-      title: faker.music.songName(),
-      description: faker.lorem.paragraph(),
-      duration: (Math.floor(Math.random() * 30) + 1) * 60,
-      audio_url: ''
-    })
+const createEpisodeSeeds = (count: number, creatorId: number) => {
+  const episodeSeeds: IEpisodeForm[] = [];
+
+  while (episodeSeeds.length < count) {
+    const title = faker.music.songName();
+    const description = faker.lorem.paragraph();
+    const category_id = (Math.floor(Math.random() * CATEGORY_SEED_SIZE) + 1);
+    const duration = (Math.floor(Math.random() * 30) + 1) * 60;
+
+    const isUnique = !episodeSeeds.some(seed => seed.title === title);
+
+    if (isUnique) {
+      episodeSeeds.push({
+        title,
+        description,
+        creator_id: creatorId,
+        category_id,
+        duration,
+        audio_url: '',
+      });
+    }
   }
 
   return episodeSeeds;
@@ -99,7 +125,7 @@ const main = async () => {
 
     userCreator.password = await hash(userCreator.password, await genSalt());
 
-    const sampleCreator = await prisma.user.create({
+    await prisma.user.create({
       data: userCreator
     });
 
@@ -109,24 +135,22 @@ const main = async () => {
       data: categorySeeds,
     });
 
-    // Podcasts & Episodes
-    const podcastSeeds = createPodcastSeeds(PODCAST_SEED_SIZE, sampleCreator.user_id);
-    await Promise.all(
-      podcastSeeds.map(async (podcast) => {
-        const createdPodcast = await prisma.podcast.create({
-          data: podcast
-        });
+    // Creators & Episodes
+    const creatorSeeds = createCreatorSeeds(CREATOR_SEED_SIZE, userCreator.password);
 
-        const episodeSeeds = createEpisodeSeeds(EPISODE_PER_PODCAST_SEED_SIZE, createdPodcast.podcast_id);
-        await Promise.all(
-          episodeSeeds.map(async (episode) => {
-            await prisma.episode.create({
-              data: episode
-            });
-          })
-        );
-      })
-    );
+    for (const user of creatorSeeds) {
+      const createdCreator = await prisma.user.create({
+        data: user,
+      });
+
+      const episodeSeeds = createEpisodeSeeds(EPISODE_PER_CREATOR_SEED_SIZE, createdCreator.user_id);
+
+      for (const episode of episodeSeeds) {
+        await prisma.episode.create({
+          data: episode,
+        });
+      }
+    }
 
     console.log('Data seeded successfully');
   } catch (error) {

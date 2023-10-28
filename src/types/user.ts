@@ -12,12 +12,22 @@ export type IUser = {
   updated_at: Date
 }
 
+export type IUserForm = {
+  user_id?: number
+  email: string
+  username: string
+  first_name: string
+  last_name: string
+  password: string
+}
+
 export enum UserRoleId {
   Admin = 1,
   User = 2
 }
 
 export type IUserService = {
+  getUserById: (user_id: number) => Promise<IUser | null>
   getUserByUsername: (username: string) => Promise<IUser | null>
   getUserByEmail: (email: string) => Promise<IUser | null>
 }

@@ -2,11 +2,10 @@ import { Router } from 'express';
 
 import { RequestHelper } from '../helpers';
 import { loginSchema, registerSchema } from '../dto';
-import { AuthService, UserService } from '../services';
+import { AuthService } from '../services';
 import { AuthController } from '../controllers';
 
-const userService = new UserService();
-const authService = new AuthService(userService);
+const authService = new AuthService();
 const authController = new AuthController(authService);
 
 const authRoute = Router();

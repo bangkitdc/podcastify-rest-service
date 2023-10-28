@@ -17,6 +17,7 @@ services:
         condition: service_healthy
       podcastify-rest-service-cache:
         condition: service_started
+
   podcastify-rest-service-db:
     container_name: podcastify-rest-service-db
     image: postgres:13.9-alpine3.17

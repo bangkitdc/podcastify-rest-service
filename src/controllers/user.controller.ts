@@ -19,7 +19,8 @@ class UserController implements IUserController {
         email: data?.email,
         username: data?.username,
         first_name: data?.first_name,
-        last_name: data?.last_name
+        last_name: data?.last_name,
+        role_id: data?.role_id
       }
     );
   }
