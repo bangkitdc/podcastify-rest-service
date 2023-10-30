@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { ResponseHelper } from "../helpers";
-import { IEpisodeController, IEpisodeService } from "../types/episode";
+import { IEpisodeController, IEpisodeForm, IEpisodeService } from "../types/episode";
 import { HttpStatusCode } from "../types/http";
 
 class EpisodeController implements IEpisodeController {
@@ -8,6 +8,8 @@ class EpisodeController implements IEpisodeController {
     this.getAllEpisodes = this.getAllEpisodes.bind(this);
     this.getEpisodeById = this.getEpisodeById.bind(this);
     this.createEpisode = this.createEpisode.bind(this);
+    this.updateEpisode = this.updateEpisode.bind(this);
+    this.deleteEpisode = this.deleteEpisode.bind(this);
   }
 
   async getAllEpisodes(req: Request, res: Response) {
@@ -60,6 +62,39 @@ class EpisodeController implements IEpisodeController {
       'Episode created successfully',
       episode
     );
+  }
+
+  async updateEpisode(req: Request, res: Response) {
+    const { episode_id } = req.params
+
+    const episodeData: IEpisodeForm = req.body
+
+    episodeData.episode_id = parseInt(episode_id)
+
+    const episode = await this.episodeService.updateEpisode(
+      episodeData
+    );
+
+    return ResponseHelper.responseSuccess(
+      res,
+      HttpStatusCode.Ok,
+      'Episode updated successfully',
+      episode
+    )
+
+  }
+
+  async deleteEpisode(req: Request, res: Response) {
+    const { episode_id } = req.params;
+
+    const episode = await this.episodeService.deleteEpisode(parseInt(episode_id));
+
+    return ResponseHelper.responseSuccess(
+      res,
+      HttpStatusCode.Ok,
+      'Episode deleted successfully',
+      episode
+    )
   }
 }
 
