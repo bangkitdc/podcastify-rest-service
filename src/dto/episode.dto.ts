@@ -31,7 +31,26 @@ const createEpisodeSchema = z.object({
   })
 });
 
+const updateEpisodeSchema = z.object({
+  body: z.object({
+    title: z.string({
+      required_error: "Title is required"
+    }),
+    description: z.string({
+      required_error: "Description is required"
+    }),
+    category_id: z.number({
+      required_error: "Category Id is required"
+    }),
+    image_url: z.string(),
+    audio_url: z.string({
+      required_error: "Audio is required",
+    }),
+  })
+})
+
 export {
   getEpisodeByIdSchema,
   createEpisodeSchema,
+  updateEpisodeSchema,
 }

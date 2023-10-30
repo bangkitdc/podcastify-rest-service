@@ -5,6 +5,7 @@ import { HttpStatusCode } from "../types/http";
 import { IUserService } from "../types/user";
 import { UserService, CategoryService } from ".";
 import { ICategoryService } from "../types/category";
+import { IEpisodeForm } from "../types/episode";
 
 class EpisodeService implements IEpisodeService {
   private episodeModel = prisma.episode;
@@ -77,6 +78,53 @@ class EpisodeService implements IEpisodeService {
         audio_url: audio_url
       }
     });
+  }
+
+  async updateEpisode(
+    episodeData: IEpisodeForm
+  ) {
+    const isEpisodeTitleExist = await this.episodeModel.findFirst({
+      where: {
+        title: episodeData.title
+      }
+    })
+
+    const errors: Record<string, string[]> = {};
+
+    if(isEpisodeTitleExist) {
+      errors.title = ["Title already exists"]
+    }
+
+    if (Object.keys(errors).length > 0) {
+      throw new HttpError(
+        HttpStatusCode.NotFound, 
+        'Operation failed, please check your request again', 
+        errors
+      );
+    }
+
+    return await this.episodeModel.update({
+      where: {
+        episode_id: episodeData.episode_id
+      },
+      data: {
+        title: episodeData.title,
+        description: episodeData.description,
+        creator_id: episodeData.creator_id,
+        category_id: episodeData.category_id,
+        duration: episodeData.duration,
+        image_url: episodeData.image_url,
+        audio_url: episodeData.audio_url
+      }
+    })
+  }
+
+  async deleteEpisode(episode_id : number) {
+    return await this.episodeModel.delete({
+      where: {
+        episode_id: episode_id
+      }
+    })
   }
 }
 
