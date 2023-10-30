@@ -29,7 +29,7 @@ episodeRoute
   )
   .put(
     '/episode/:episode_id',
-    // AuthMiddleware.authenticateToken,
+    AuthMiddleware.authenticateToken,
     RequestHelper.validate(updateEpisodeSchema),
     RequestHelper.exceptionGuard(episodeController.updateEpisode)
   )

@@ -120,6 +120,26 @@ class EpisodeService implements IEpisodeService {
   }
 
   async deleteEpisode(episode_id : number) {
+    const isEpisodeExist = await this.episodeModel.findFirst({
+      where: {
+        episode_id: episode_id
+      }
+    })
+
+    const errors: Record<string, string[]> = {};
+
+    if(!isEpisodeExist){
+      errors.episode_id = ["Episode does not exist"]
+    }
+
+    if (Object.keys(errors).length > 0) {
+      throw new HttpError(
+        HttpStatusCode.NotFound, 
+        'Operation failed, please check your request again', 
+        errors
+      );
+    }
+
     return await this.episodeModel.delete({
       where: {
         episode_id: episode_id
