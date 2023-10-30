@@ -29,6 +29,7 @@ export type IEpisodeController = {
   getEpisodeById: IRequestResponseHandler
   createEpisode: IRequestResponseHandler
   updateEpisode: IRequestResponseHandler
+  deleteEpisode: IRequestResponseHandler
 }
 
 export type IEpisodeService = {
