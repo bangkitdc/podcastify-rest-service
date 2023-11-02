@@ -9,13 +9,14 @@ class UserController implements IUserController {
   }
 
   async getSelf(req: Request, res: Response) {
-    const data = await this.userService.getUserByUsername(res.locals.user.username);
+    const data = await this.userService.getUserById(res.locals.user.user_id);
 
     return ResponseHelper.responseSuccess(
       res,
       HttpStatusCode.Ok,
       'Operation successful',
       {
+        user_id: data?.user_id,
         email: data?.email,
         username: data?.username,
         first_name: data?.first_name,
