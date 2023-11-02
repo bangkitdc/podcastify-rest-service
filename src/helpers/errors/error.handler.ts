@@ -3,7 +3,7 @@ import { ZodError } from 'zod';
 
 import { ResponseHelper, HttpError } from '..';
 import { HttpStatusCode } from '../../types/http';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { PrismaClientKnownRequestError, PrismaClientUnknownRequestError } from '@prisma/client/runtime/library';
 import { PrismaErrorForeignKeyConstraint, PrismaErrorUniqueConstraint } from '../../types/error';
 
 abstract class ErrorHandler {
@@ -164,7 +164,28 @@ class PrismaClientKnownRequestErrorHandler extends ErrorHandler {
   }
 }
 
+class PrismaClientUnknownRequestErrorHandler extends ErrorHandler {
+  // THINGS TO NOTICE: cuman bisa nge catch 1 exception
+
+  protected canHandle(error: unknown): boolean {
+    return error instanceof PrismaClientUnknownRequestError;
+  }
+
+  protected getResponse(
+    jsonResponse: Response,
+    error: PrismaClientUnknownRequestError,
+  ): Response {
+    return ResponseHelper.responseError(
+      jsonResponse, 
+      HttpStatusCode.InternalServerError,
+      error.message,
+      error
+    );
+  }
+}
+
 export default 
   new HttpErrorHandler().setNextHandler(
   new ZodErrorHandler().setNextHandler(
-  new PrismaClientKnownRequestErrorHandler()));
+  new PrismaClientKnownRequestErrorHandler().setNextHandler(
+  new PrismaClientUnknownRequestErrorHandler())));

@@ -1,12 +1,27 @@
-const DEFAULT_SECRET_KEY = 'podcastify_default_access_secret_key';
-const DEFAULT_TIME_EXPIRATION = 3600; // 1 hour
+const DEFAULT_ACCESS_TOKEN = 'podcastify_default_access_secret_key';
+const DEFAULT_ACCESS_TOKEN_EXPIRATION = 3600; // 1 hour
 
-const jwtSecretKey =
-  (process.env.JWT_SECRET_KEY as string) || DEFAULT_SECRET_KEY;
+const DEFAULT_REFRESH_TOKEN = 'podcastify_default_access_refresh_key';
+const DEFAULT_REFRESH_TOKEN_EXPIRATION = 3600 * 24 * 7; // 7 days
 
-const jwtTimeExpirationString = process.env.JWT_TIME_EXPIRATION;
-const jwtTimeExpiration = jwtTimeExpirationString
-  ? parseInt(jwtTimeExpirationString, 10)
-  : DEFAULT_TIME_EXPIRATION;
+const jwtAccessToken = (process.env.ACCESS_TOKEN_SCRET as string) || DEFAULT_ACCESS_TOKEN;
 
-export { jwtSecretKey, jwtTimeExpiration };
+const jwtAccessTokenExpirationString = process.env.ACCESS_TOKEN_EXPIRATION;
+const jwtAccessTokenExpiration = jwtAccessTokenExpirationString
+  ? parseInt(jwtAccessTokenExpirationString, 10)
+  : DEFAULT_ACCESS_TOKEN_EXPIRATION;
+
+const jwtRefreshToken = (process.env.REFRESH_TOKEN_SCRET as string) || DEFAULT_REFRESH_TOKEN;
+
+const jwtRefreshTokenExpirationString = process.env.JWT_TIME_REFRESH_EXPIRATION;
+const jwtRefreshTokenExpiration = jwtRefreshTokenExpirationString
+  ? parseInt(jwtRefreshTokenExpirationString, 10)
+  : DEFAULT_REFRESH_TOKEN_EXPIRATION;
+
+export { 
+  jwtAccessToken, 
+  jwtAccessTokenExpiration,
+
+  jwtRefreshToken,
+  jwtRefreshTokenExpiration
+};

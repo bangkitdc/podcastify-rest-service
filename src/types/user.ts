@@ -12,6 +12,15 @@ export type IUser = {
   updated_at: Date
 }
 
+export type IUserAuth = {
+  user_id: number
+  email: string
+  username: string
+  first_name: string
+  last_name: string
+  role_id: number
+}
+
 export type IUserForm = {
   user_id?: number
   email: string
