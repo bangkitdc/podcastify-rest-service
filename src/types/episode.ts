@@ -28,6 +28,8 @@ export type IEpisodeController = {
   getAllEpisodes: IRequestResponseHandler
   getEpisodeById: IRequestResponseHandler
   createEpisode: IRequestResponseHandler
+  updateEpisode: IRequestResponseHandler
+  deleteEpisode: IRequestResponseHandler
 }
 
 export type IEpisodeService = {
@@ -44,6 +46,6 @@ export type IEpisodeService = {
   ) => Promise<IEpisode>
 
   // TODO: Irsyad
-  // updateEpisode: (arg0: IEpisodeForm) => Promise<IEpisode>
-  // deleteEpisode: (episode_id: number) => Promise<IEpisode>
+  updateEpisode: (arg0: IEpisodeForm) => Promise<IEpisode>
+  deleteEpisode: (episode_id: number) => Promise<IEpisode>
 }
