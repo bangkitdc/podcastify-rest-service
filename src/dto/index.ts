@@ -1,9 +1,9 @@
 import { loginSchema, registerSchema } from './auth.dto';
-import { getEpisodeByIdSchema, createEpisodeSchema } from './episode.dto';
 import {
   approveSubscriptionSchema,
   getAllSubscriptionByCreatorIdSchema,
 } from './subscription.dto';
+import { getEpisodeByIdSchema, createEpisodeSchema, updateEpisodeSchema } from './episode.dto';
 
 export {
   loginSchema,
@@ -11,6 +11,7 @@ export {
 
   getEpisodeByIdSchema,
   createEpisodeSchema,
+  updateEpisodeSchema,
   
   approveSubscriptionSchema,
   getAllSubscriptionByCreatorIdSchema,

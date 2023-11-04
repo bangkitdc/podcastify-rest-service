@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import { RequestHelper } from '../helpers';
-import { getEpisodeByIdSchema, createEpisodeSchema } from '../dto';
+import { getEpisodeByIdSchema, createEpisodeSchema, updateEpisodeSchema } from '../dto';
 import { EpisodeService } from '../services';
 import { EpisodeController } from '../controllers';
 import { AuthMiddleware } from '../middlewares';
@@ -26,6 +26,17 @@ episodeRoute
     AuthMiddleware.authenticateToken,
     RequestHelper.validate(createEpisodeSchema),
     RequestHelper.exceptionGuard(episodeController.createEpisode)
+  )
+  .put(
+    '/episode/:episode_id',
+    AuthMiddleware.authenticateToken,
+    RequestHelper.validate(updateEpisodeSchema),
+    RequestHelper.exceptionGuard(episodeController.updateEpisode)
+  )
+  .delete(
+    '/episode/:episode_id', 
+    AuthMiddleware.authenticateToken,
+    RequestHelper.exceptionGuard(episodeController.deleteEpisode)
   )
   // .post(
   //   '/login',
