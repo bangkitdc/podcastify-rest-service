@@ -73,6 +73,7 @@ class SoapService implements ISoapService {
       creatorID: item.creatorID,
       status: item.status,
       subscriberID: item.subscriberID,
+      subscriberName: item.subscriberName,
       updatedAt: item.updatedAt.nanos,
     }));
 
