@@ -1,8 +1,5 @@
 import axios from 'axios';
-import { parseStringPromise } from 'xml2js';
-import { IResponseModel } from '../types/soap';
-import { HttpError } from '.';
-import { HttpStatusCode } from '../types/http';
+import { parseStringPromise, processors } from 'xml2js';
 
 class SoapApiClient {
   private axiosInstance;
@@ -22,25 +19,25 @@ class SoapApiClient {
   post = async (endpoint: string, payload: string) => {
     try {
       const response = await this.axiosInstance.post(endpoint, payload);
-      console.log(response.data);
-      const parsedJsonResponse = await parseStringPromise(response.data);
-      console.log(response.data);
-      const responseModel: IResponseModel = {
-        statusCode:
-          parsedJsonResponse['S:Envelope']['S:Body'][0][
-            'ns2:updateStatusResponse'
-          ][0]['return'][0]['statusCode'][0],
-        message:
-          parsedJsonResponse['S:Envelope']['S:Body'][0][
-            'ns2:updateStatusResponse'
-          ][0]['return'][0]['message'][0],
+
+      const options = {
+        explicitArray: false,
+        tagNameProcessors: [processors.stripPrefix],
       };
 
-      if (responseModel.statusCode >= 400) {
-        throw new HttpError(responseModel.statusCode, responseModel.message);
+      const parsedJsonResponse = await parseStringPromise(
+        response.data,
+        options,
+      );
+
+      // Get the soap body and remove optional attribute(s) from <Body> element
+      let soapBody = parsedJsonResponse.Envelope.Body;
+
+      if (soapBody.$) {
+        delete soapBody.$;
       }
 
-      return responseModel;
+      return soapBody;
     } catch (error) {
       console.error('Error in post method: ' + error);
       throw error;

@@ -1,6 +1,9 @@
 import { ISoapService } from '../types/soap';
 import { SUBSCRIPTION_STATUS } from '../types/subscription';
 import { SoapApiClient } from '../helpers';
+import { IResponseModel } from '../types/soap';
+import { HttpError } from '../helpers';
+import { HttpStatusCode } from '../types/http';
 
 class SoapService implements ISoapService {
   private serviceEndpoint = 'http://service.podcastify.com/';
@@ -33,9 +36,47 @@ class SoapService implements ISoapService {
     status: SUBSCRIPTION_STATUS;
   }) => {
     const payload = this.createXML('updateStatus', args);
-    const response = await this.api.post(this.url, payload);
+    const soapResponse = await this.api.post(this.url, payload);
 
-    return response;
+    const parsedResponse: IResponseModel = {
+      statusCode: soapResponse.updateStatusResponse.return.statusCode,
+      message: soapResponse.updateStatusResponse.return.message,
+    };
+
+    if (parsedResponse.statusCode >= 400) {
+      throw new HttpError(parsedResponse.statusCode, parsedResponse.message);
+    }
+
+    return parsedResponse;
+  };
+
+  getAllSubscriptionByCreatorId = async (args: {
+    creator_id: number;
+    status: SUBSCRIPTION_STATUS;
+  }) => {
+    const payload = this.createXML('getSubscriptionByCreatorID', args);
+    const soapResponse = await this.api.post(this.url, payload);
+
+    const parsedResponse: IResponseModel = {
+      statusCode: HttpStatusCode.Ok,
+      message: 'success',
+    };
+
+    // Check if multiple return objects exist in the response
+    let returnData = soapResponse.getSubscriptionByCreatorIDResponse.return;
+    if (!Array.isArray(returnData)) {
+      returnData = [returnData];
+    }
+
+    parsedResponse.data = returnData.map((item: any) => ({
+      createdAt: item.createdAt.nanos,
+      creatorID: item.creatorID,
+      status: item.status,
+      subscriberID: item.subscriberID,
+      updatedAt: item.updatedAt.nanos,
+    }));
+
+    return parsedResponse;
   };
 }
 
