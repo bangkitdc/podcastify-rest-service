@@ -30,7 +30,7 @@ class AuthHelper {
       token,
       {
         httpOnly: true,
-        // TODO: domain
+        path: "/api/v1/refresh_token"
       }
     );
   }
