@@ -25,6 +25,7 @@ const createEpisodeSchema = z.object({
     duration: z.number({
       required_error: "Duration is required",
     }),
+    image_url: z.string().nullable(),
     audio_url: z.string({
       required_error: "Audio is required",
     })
@@ -42,7 +43,7 @@ const updateEpisodeSchema = z.object({
     category_id: z.number({
       required_error: "Category Id is required"
     }),
-    image_url: z.string(),
+    image_url: z.string().nullable(),
     audio_url: z.string({
       required_error: "Audio is required",
     }),

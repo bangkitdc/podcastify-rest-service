@@ -27,7 +27,7 @@ episodeRoute
     RequestHelper.validate(createEpisodeSchema),
     RequestHelper.exceptionGuard(episodeController.createEpisode)
   )
-  .put(
+  .post(
     '/episode/:episode_id',
     AuthMiddleware.authenticateToken,
     RequestHelper.validate(updateEpisodeSchema),

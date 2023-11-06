@@ -83,7 +83,7 @@ class EpisodeService implements IEpisodeService {
   async updateEpisode(
     episodeData: IEpisodeForm
   ) {
-    const isEpisodeTitleExist = await this.episodeModel.findFirst({
+    const isEpisodeTitleExist = await this.episodeModel.findMany({
       where: {
         title: episodeData.title
       }
@@ -91,7 +91,7 @@ class EpisodeService implements IEpisodeService {
 
     const errors: Record<string, string[]> = {};
 
-    if(isEpisodeTitleExist) {
+    if(isEpisodeTitleExist.length > 1) {
       errors.title = ["Title already exists"]
     }
 
