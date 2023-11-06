@@ -41,7 +41,7 @@ const createEpisodeSchema = z.object({
     }).min(1, {
       message: "Duration is required"
     }),
-
+    image_url: z.string().nullable(),
     audio_url: z.string({
       required_error: "Audio is required",
     }).min(1, {
@@ -69,8 +69,7 @@ const updateEpisodeSchema = z.object({
     }).min(1, {
       message: "Category Id is required"
     }),
-
-    image_url: z.string(),
+    image_url: z.string().nullable(),
     audio_url: z.string({
       required_error: "Audio is required",
     }).min(1, {
