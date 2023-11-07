@@ -32,20 +32,31 @@ class SubscriptionController implements ISubscriptionController {
     );
   };
 
-  getAllSubscriptionByCreatorId = async (req: Request, res: Response) => {
-    const { creator_id } = req.params;
+  getAllSubscriptionBySubscriberID = async (req: Request, res: Response) => {
+    const { subscriber_id } = req.params;
     const { status } = req.query;
 
-    const result = await this.subscriptionService.getAllSubscriptionByCreatorId(
-      Number(creator_id),
-      status as SUBSCRIPTION_STATUS
+    const result = await this.subscriptionService.getAllSubscriptionBySubscriberID(
+      Number(subscriber_id),
+      status as SUBSCRIPTION_STATUS,
     );
 
     return ResponseHelper.responseSuccess(
       res,
       HttpStatusCode.Ok,
       'Operation success',
-      result
+      result,
+    );
+  };
+
+  getAllSubscriptions = async (req: Request, res: Response) => {
+    const result = await this.subscriptionService.getAllSubscriptions();
+
+    return ResponseHelper.responseSuccess(
+      res,
+      HttpStatusCode.Ok,
+      'Operation success',
+      result,
     );
   };
 }

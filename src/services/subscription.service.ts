@@ -6,8 +6,8 @@ import prisma from '../models';
 import { IUserService } from '../types/user';
 import { SoapService, UserService } from '.';
 import { ISoapService } from '../types/soap';
-import { HttpStatusCode } from "../types/http";
-import { HttpError } from "../helpers";
+import { HttpStatusCode } from '../types/http';
+import { HttpError } from '../helpers';
 
 class SubscriptionService implements ISubscriptionService {
   private SOAP_SUBSCRIPTION_ENDPOINT = '/subscription';
@@ -43,32 +43,23 @@ class SubscriptionService implements ISubscriptionService {
     }
   };
 
-  getAllSubscriptionByCreatorId = async (
-    creator_id: number,
+  getAllSubscriptionBySubscriberID = async (
+    subscriber_id: number,
     status: SUBSCRIPTION_STATUS,
   ) => {
-    const isCreatorExists = await this.userService.getUserById(creator_id);
-
-    const errors: Record<string, string[]> = {};
-
-    if (!isCreatorExists) {
-      errors.creator_id = ["Creator Id is not exists"];
-    }
-
-    if (Object.keys(errors).length > 0) {
-      throw new HttpError(
-        HttpStatusCode.NotFound, 
-        'Operation failed, please check your request again', 
-        errors
-      );
-    }
 
     const args = {
-      creator_id,
+      subscriber_id,
       status,
     };
 
-    const response = await this.soapService.getAllSubscriptionByCreatorId(args);
+    const response = await this.soapService.getAllSubscriptionBySubscriberID(args);
+
+    return response.data;
+  };
+
+  getAllSubscriptions = async () => {
+    const response = await this.soapService.getAllSubscriptions();
 
     return response.data;
   };

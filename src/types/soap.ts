@@ -7,10 +7,11 @@ export interface ISoapService {
     subscriber_id: number;
     status: SUBSCRIPTION_STATUS;
   }) => Promise<IResponseModel>;
-  getAllSubscriptionByCreatorId: (args: {
-    creator_id: number;
+  getAllSubscriptionBySubscriberID: (args: {
+    subscriber_id: number;
     status: SUBSCRIPTION_STATUS;
   }) => Promise<IResponseModel>;
+  getAllSubscriptions: () => Promise<IResponseModel>;
 
   // add more endpoint method
 }

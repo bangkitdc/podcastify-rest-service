@@ -16,12 +16,12 @@ const approveSubscriptionSchema = z.object({
   }),
 });
 
-const getAllSubscriptionByCreatorIdSchema = z.object({
+const getAllSubscriptionBySubscriberIdSchema = z.object({
   params: z.object({
-    creator_id: z
+    subscriber_id: z
       .string()
       .refine((value) => !isNaN(Number(value)), {
-        message: 'Params Creator ID must be a number',
+        message: 'Params Subscriber ID must be a number',
       })
       .transform(Number),
   }),
@@ -34,4 +34,4 @@ const getAllSubscriptionByCreatorIdSchema = z.object({
   }),
 });
 
-export { approveSubscriptionSchema, getAllSubscriptionByCreatorIdSchema };
+export { approveSubscriptionSchema, getAllSubscriptionBySubscriberIdSchema };

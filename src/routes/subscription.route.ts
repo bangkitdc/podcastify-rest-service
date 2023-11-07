@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { RequestHelper } from '../helpers';
 import {
   approveSubscriptionSchema,
-  getAllSubscriptionByCreatorIdSchema,
+  getAllSubscriptionBySubscriberIdSchema,
 } from '../dto';
 import { SubscriptionService } from '../services';
 import { SubscriptionController } from '../controllers';
@@ -20,10 +20,16 @@ subscriptionRoute
     RequestHelper.exceptionGuard(subscriptionController.approveSubscription),
   )
   .get(
-    '/subscription/:creator_id',
-    RequestHelper.validate(getAllSubscriptionByCreatorIdSchema),
+    '/subscription',
     RequestHelper.exceptionGuard(
-      subscriptionController.getAllSubscriptionByCreatorId,
+      subscriptionController.getAllSubscriptions,
+    ),
+  )
+  .get(
+    '/subscription/:subscriber_id',
+    RequestHelper.validate(getAllSubscriptionBySubscriberIdSchema),
+    RequestHelper.exceptionGuard(
+      subscriptionController.getAllSubscriptionBySubscriberID,
     ),
   );
 

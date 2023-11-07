@@ -2,7 +2,8 @@ import { IRequestResponseHandler } from './http';
 
 export type ISubscriptionController = {
   approveSubscription: IRequestResponseHandler;
-  getAllSubscriptionByCreatorId: IRequestResponseHandler;
+  getAllSubscriptionBySubscriberID: IRequestResponseHandler;
+  getAllSubscriptions: IRequestResponseHandler;
 };
 
 export type ISubscriptionService = {
@@ -12,10 +13,12 @@ export type ISubscriptionService = {
     status: SUBSCRIPTION_STATUS,
   ) => Promise<void>;
 
-  getAllSubscriptionByCreatorId: (
-    creator_id: number,
+  getAllSubscriptionBySubscriberID: (
+    subscriber_id: number,
     status: SUBSCRIPTION_STATUS,
   ) => Promise<ISubscription[]>;
+
+  getAllSubscriptions: () => Promise<ISubscription[]>;
 };
 
 export type ISubscription = {
@@ -23,6 +26,7 @@ export type ISubscription = {
   updated_at: Date;
   creator_id: number;
   subscriber_id: string;
+  status: SUBSCRIPTION_STATUS;
 };
 
 export enum SUBSCRIPTION_STATUS {

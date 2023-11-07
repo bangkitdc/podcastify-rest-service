@@ -13,7 +13,7 @@ class SoapService implements ISoapService {
     this.api = new SoapApiClient();
   }
 
-  private createXML = (methodName: string, args: { [key: string]: any }) => {
+  private createXML = (methodName: string, args?: { [key: string]: any }) => {
     let xmlArgs = '';
     for (const key in args) {
       xmlArgs += `<${key}>${args[key]}</${key}>`;
@@ -50,11 +50,11 @@ class SoapService implements ISoapService {
     return parsedResponse;
   };
 
-  getAllSubscriptionByCreatorId = async (args: {
-    creator_id: number;
+  getAllSubscriptionBySubscriberID = async (args: {
+    subscriber_id: number;
     status: SUBSCRIPTION_STATUS;
   }) => {
-    const payload = this.createXML('getSubscriptionByCreatorID', args);
+    const payload = this.createXML('getSubscriptionBySubscriberID', args);
     const soapResponse = await this.api.post(this.url, payload);
 
     const parsedResponse: IResponseModel = {
@@ -63,7 +63,7 @@ class SoapService implements ISoapService {
     };
 
     // Check if multiple return objects exist in the response
-    let returnData = soapResponse.getSubscriptionByCreatorIDResponse.return;
+    let returnData = soapResponse.getSubscriptionBySubscriberIDResponse.return;
     if (!Array.isArray(returnData)) {
       returnData = [returnData];
     }
@@ -79,6 +79,34 @@ class SoapService implements ISoapService {
 
     return parsedResponse;
   };
+
+  getAllSubscriptions = async () => {
+    const payload = this.createXML('getAllSubscriptions');
+    const soapResponse = await this.api.post(this.url, payload);
+
+    const parsedResponse: IResponseModel = {
+      statusCode: HttpStatusCode.Ok,
+      message: 'success',
+    };
+
+    // Check if multiple return objects exist in the response
+    let returnData = soapResponse.getAllSubscriptionsResponse.return;
+    if (!Array.isArray(returnData)) {
+      returnData = [returnData];
+    }
+
+    parsedResponse.data = returnData.map((item: any) => ({
+      createdAt: item.createdAt.nanos,
+      creatorID: item.creatorID,
+      status: item.status,
+      subscriberID: item.subscriberID,
+      subscriberName: item.subscriberName,
+      updatedAt: item.updatedAt.nanos,
+    }));
+
+    return parsedResponse;
+  };
+
 }
 
 export default SoapService;
