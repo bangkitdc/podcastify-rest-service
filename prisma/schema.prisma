@@ -29,6 +29,7 @@ model User {
   
   role            Role      @relation(fields: [role_id], references: [role_id])
   episodes        Episode[]
+  subscriptions   Subscription[]
 }
 
 model Category {
