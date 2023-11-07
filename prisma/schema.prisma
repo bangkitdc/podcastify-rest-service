@@ -80,14 +80,3 @@ model EpisodeComment {
 
   episode         Episode   @relation(fields: [episode_id], references: [episode_id])
 }
-
-model Subscription {
-  @@id([creator_id, subscriber_id])
-
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  creator_id      Int       
-  subscriber_id   Int
-
-  user            User      @relation(fields: [creator_id], references: [user_id])
-}
