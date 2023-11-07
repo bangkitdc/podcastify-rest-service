@@ -2,7 +2,6 @@ import {
   ISubscriptionService,
   SUBSCRIPTION_STATUS,
 } from '../types/subscription';
-import prisma from '../models';
 import { IUserService } from '../types/user';
 import { SoapService, UserService } from '.';
 import { ISoapService } from '../types/soap';
@@ -11,7 +10,6 @@ import { HttpError } from '../helpers';
 
 class SubscriptionService implements ISubscriptionService {
   private SOAP_SUBSCRIPTION_ENDPOINT = '/subscription';
-  private subscriptionModel = prisma.subscription;
   private userService: IUserService;
   private soapService: ISoapService;
 
@@ -32,15 +30,6 @@ class SubscriptionService implements ISubscriptionService {
     };
 
     await this.soapService.updateStatus(args);
-
-    if (status == SUBSCRIPTION_STATUS.ACCEPTED) {
-      this.subscriptionModel.create({
-        data: {
-          creator_id: creator_id,
-          subscriber_id: subscriber_id,
-        },
-      });
-    }
   };
 
   getAllSubscriptionBySubscriberID = async (
