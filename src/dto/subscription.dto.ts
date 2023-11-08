@@ -2,12 +2,18 @@ import { z } from 'zod';
 
 const approveSubscriptionSchema = z.object({
   body: z.object({
-    creator_id: z.number({
-      required_error: 'Creator ID is required',
-    }),
-    subscriber_id: z.number({
-      required_error: 'Subscriber ID is required',
-    }),
+    creator_id: z
+      .string()
+      .refine((value) => !isNaN(Number(value)), {
+        message: 'Creator ID must be a number',
+      })
+      .transform(Number),
+    subscriber_id: z
+      .string()
+      .refine((value) => !isNaN(Number(value)), {
+        message: 'Subscriber ID must be a number',
+      })
+      .transform(Number),
     status: z
       .enum(['ACCEPTED', 'REJECTED'])
       .refine((value) => value !== undefined, {
