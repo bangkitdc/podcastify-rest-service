@@ -30,6 +30,14 @@ export type IUserForm = {
   password: string
 }
 
+export type IUserToApp = {
+  user_id: number
+  username: string
+  first_name: string
+  last_name: string
+  status: string
+}
+
 export enum UserRoleId {
   Admin = 1,
   User = 2
@@ -39,6 +47,7 @@ export type IUserService = {
   getUserById: (user_id: number) => Promise<IUser | null>
   getUserByUsername: (username: string) => Promise<IUser | null>
   getUserByEmail: (email: string) => Promise<IUser | null>
+  getCreators: (issuer_id: number) => Promise<IUserToApp[] | null> 
 }
 
 export type IUserController = {

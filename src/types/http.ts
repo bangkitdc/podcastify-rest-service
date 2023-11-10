@@ -79,3 +79,8 @@ export type IApiBaseResponseError<T> = {
   message: string
   errors?: T
 }
+
+export enum ApiService {
+  APP_SERVICE = 'App Service',
+  SOAP_SERVICE = 'Soap Service',
+}

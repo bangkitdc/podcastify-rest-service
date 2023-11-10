@@ -1,5 +1,5 @@
 import { ISoapService } from '../types/soap';
-import { SUBSCRIPTION_STATUS } from '../types/subscription';
+import { ISubscriptionSOAP, SUBSCRIPTION_STATUS } from '../types/subscription';
 import { SoapApiClient } from '../helpers';
 import { IResponseModel } from '../types/soap';
 import { HttpError } from '../helpers';
@@ -13,6 +13,7 @@ class SoapService implements ISoapService {
     this.api = new SoapApiClient();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private createXML = (methodName: string, args?: { [key: string]: any }) => {
     let xmlArgs = '';
     for (const key in args) {
@@ -68,13 +69,13 @@ class SoapService implements ISoapService {
       returnData = [returnData];
     }
 
-    parsedResponse.data = returnData.map((item: any) => ({
-      createdAt: item.createdAt.nanos,
-      creatorID: item.creatorID,
+    parsedResponse.data = returnData.map((item: ISubscriptionSOAP) => ({
+      created_at: item.createdAt,
+      updated_at: item.updatedAt,
+      creator_id: item.creatorID,
       status: item.status,
-      subscriberID: item.subscriberID,
-      subscriberName: item.subscriberName,
-      updatedAt: item.updatedAt.nanos,
+      subscriber_id: item.subscriberID,
+      subscriber_name: item.subscriberName,
     }));
 
     return parsedResponse;
@@ -95,13 +96,13 @@ class SoapService implements ISoapService {
       returnData = [returnData];
     }
 
-    parsedResponse.data = returnData.map((item: any) => ({
-      createdAt: item.createdAt.nanos,
-      creatorID: item.creatorID,
+    parsedResponse.data = returnData.map((item: ISubscriptionSOAP) => ({
+      created_at: item.createdAt,
+      updated_at: item.updatedAt,
+      creator_id: item.creatorID,
       status: item.status,
-      subscriberID: item.subscriberID,
-      subscriberName: item.subscriberName,
-      updatedAt: item.updatedAt.nanos,
+      subscriber_id: item.subscriberID,
+      subscriber_name: item.subscriberName,
     }));
 
     return parsedResponse;

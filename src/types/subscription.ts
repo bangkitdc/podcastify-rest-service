@@ -25,14 +25,25 @@ export type ISubscription = {
   created_at: Date;
   updated_at: Date;
   creator_id: number;
-  subscriber_id: string;
+  subscriber_id: number;
+  subscriber_name: string;
   status: SUBSCRIPTION_STATUS;
 };
+
+export type ISubscriptionSOAP = {
+  createdAt: Date;
+  updatedAt: Date;
+  creatorID: number;
+  subscriberID: number;
+  subscriberName: string;
+  status: SUBSCRIPTION_STATUS;
+}
 
 export enum SUBSCRIPTION_STATUS {
   ALL = "ALL",
   PENDING = "PENDING",
   ACCEPTED = "ACCEPTED",
   REJECTED = "REJECTED",
+  NOT_SUBSCRIBED = "NOT SUBSCRIBED"
 }
 

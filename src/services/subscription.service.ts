@@ -2,19 +2,14 @@ import {
   ISubscriptionService,
   SUBSCRIPTION_STATUS,
 } from '../types/subscription';
-import { IUserService } from '../types/user';
-import { SoapService, UserService } from '.';
+import { SoapService } from '.';
 import { ISoapService } from '../types/soap';
-import { HttpStatusCode } from '../types/http';
-import { HttpError } from '../helpers';
 
 class SubscriptionService implements ISubscriptionService {
   private SOAP_SUBSCRIPTION_ENDPOINT = '/subscription';
-  private userService: IUserService;
   private soapService: ISoapService;
 
   constructor() {
-    this.userService = new UserService();
     this.soapService = new SoapService(this.SOAP_SUBSCRIPTION_ENDPOINT);
   }
 
