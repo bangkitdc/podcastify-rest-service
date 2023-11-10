@@ -6,6 +6,7 @@ import { HttpStatusCode } from "../types/http";
 class UserController implements IUserController {
   constructor(private userService: IUserService) {
     this.getSelf = this.getSelf.bind(this);
+    this.getAllCreators = this.getAllCreators.bind(this);
   }
 
   async getSelf(req: Request, res: Response) {
@@ -23,6 +24,17 @@ class UserController implements IUserController {
         last_name: data?.last_name,
         role_id: data?.role_id
       }
+    );
+  }
+
+  async getAllCreators(req: Request, res: Response) {
+    const data = await this.userService.getCreators(res.locals.user_id);
+
+    return ResponseHelper.responseSuccess(
+      res,
+      HttpStatusCode.Ok,
+      'Operation successful',
+      data
     );
   }
 }

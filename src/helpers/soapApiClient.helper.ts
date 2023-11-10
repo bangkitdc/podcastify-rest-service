@@ -31,7 +31,7 @@ class SoapApiClient {
       );
 
       // Get the soap body and remove optional attribute(s) from <Body> element
-      let soapBody = parsedJsonResponse.Envelope.Body;
+      const soapBody = parsedJsonResponse.Envelope.Body;
 
       if (soapBody.$) {
         delete soapBody.$;
