@@ -43,17 +43,14 @@ class EpisodeService implements IEpisodeService {
     creator_id: number, 
     category_id: number,
     duration: number,
-    image_url: string,
-    audio_url: string 
-  ) {
-    const isCreatorExists = await this.userService.getUserById(creator_id);
+    image_url: string = "",
+    audio_url: string ,
+  ) {    
+    
     const isCategoryExists = await this.categoryService.getCategoryById(category_id);
 
     const errors: Record<string, string[]> = {};
 
-    if (!isCreatorExists) {
-      errors.creator_id = ["Creator Id is not exists"];
-    }
 
     if (!isCategoryExists) {
       errors.category_id = ["Category Id is not exists"];
@@ -103,6 +100,54 @@ class EpisodeService implements IEpisodeService {
       );
     }
 
+    if(episodeData.image_url && episodeData.audio_url){
+      return await this.episodeModel.update({
+        where: {
+          episode_id: episodeData.episode_id
+        },
+        data: {
+          title: episodeData.title,
+          description: episodeData.description,
+          creator_id: episodeData.creator_id,
+          category_id: Number(episodeData.category_id),
+          duration: Number(episodeData.duration),
+          image_url: episodeData.image_url,
+          audio_url: episodeData.audio_url
+        }
+      })
+    }
+
+    if(episodeData.image_url){
+      return await this.episodeModel.update({
+        where: {
+          episode_id: episodeData.episode_id
+        },
+        data: {
+          title: episodeData.title,
+          description: episodeData.description,
+          creator_id: episodeData.creator_id,
+          category_id: Number(episodeData.category_id),
+          image_url: episodeData.image_url,
+        }
+      })
+    }
+
+    if(episodeData.audio_url){
+      return await this.episodeModel.update({
+        where: {
+          episode_id: episodeData.episode_id
+        },
+        data: {
+          title: episodeData.title,
+          description: episodeData.description,
+          creator_id: episodeData.creator_id,
+          category_id: Number(episodeData.category_id),
+          duration: Number(episodeData.duration),
+          audio_url: episodeData.audio_url
+        }
+      })
+    }
+
     return await this.episodeModel.update({
       where: {
         episode_id: episodeData.episode_id
@@ -111,10 +156,7 @@ class EpisodeService implements IEpisodeService {
         title: episodeData.title,
         description: episodeData.description,
         creator_id: episodeData.creator_id,
-        category_id: episodeData.category_id,
-        duration: episodeData.duration,
-        image_url: episodeData.image_url,
-        audio_url: episodeData.audio_url
+        category_id: Number(episodeData.category_id),
       }
     })
   }

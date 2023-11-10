@@ -42,10 +42,9 @@ export type IEpisodeService = {
     category_id: number,
     duration: number,
     image_url: string,
-    audio_url: string
+    audio_url: string,
   ) => Promise<IEpisode>
 
-  // TODO: Irsyad
   updateEpisode: (arg0: IEpisodeForm) => Promise<IEpisode>
   deleteEpisode: (episode_id: number) => Promise<IEpisode>
 }
