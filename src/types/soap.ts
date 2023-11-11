@@ -4,6 +4,7 @@ export interface ISoapService {
   // subscription endpoint
   updateStatus: (args: {
     creator_id: number;
+    creator_name: string;
     subscriber_id: number;
     status: SUBSCRIPTION_STATUS;
   }) => Promise<IResponseModel>;

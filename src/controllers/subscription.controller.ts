@@ -13,14 +13,16 @@ class SubscriptionController implements ISubscriptionController {
   }
 
   approveSubscription = async (req: Request, res: Response) => {
-    const { creator_id, subscriber_id, status } = req.body as {
+    const { creator_id, creator_name, subscriber_id, status } = req.body as {
       creator_id: number;
+      creator_name: string;
       subscriber_id: number;
       status: SUBSCRIPTION_STATUS;
     };
 
     await this.subscriptionService.approveSubscription(
       creator_id,
+      creator_name,
       subscriber_id,
       status,
     );

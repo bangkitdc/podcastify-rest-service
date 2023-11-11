@@ -15,11 +15,13 @@ class SubscriptionService implements ISubscriptionService {
 
   approveSubscription = async (
     creator_id: number,
+    creator_name: string,
     subscriber_id: number,
     status: SUBSCRIPTION_STATUS,
   ) => {
     const args = {
       creator_id,
+      creator_name,
       subscriber_id,
       status,
     };

@@ -8,6 +8,13 @@ const approveSubscriptionSchema = z.object({
         message: 'Creator ID must be a number',
       })
       .transform(Number),
+    creator_name: z
+      .string({
+        required_error: 'Creator Name is required',
+      })
+      .min(1, {
+        message: 'Creator Name is required',
+      }),
     subscriber_id: z
       .string()
       .refine((value) => !isNaN(Number(value)), {
