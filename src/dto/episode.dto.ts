@@ -13,6 +13,29 @@ const getEpisodeByIdSchema = z.object({
   }),
 });
 
+const getEpisodesByCreatorIdSchema = z.object({
+  params: z.object({
+    creator_id: z.string({
+      required_error: "Params Creator Id is required"
+    }).min(1, {
+      message: "Params Creator Id is required"
+    }),
+  }),
+
+  // pagination
+  query: z.object({
+    page: z.string().refine((value) => {
+      const parsedValue = Number(value);
+      return !isNaN(parsedValue) && parsedValue > 0;
+    }, { message: "Invalid page number" }).optional(),
+
+    limit: z.string().refine((value) => {
+      const parsedValue = Number(value);
+      return !isNaN(parsedValue) && parsedValue > 0;
+    }, { message: "Invalid limit number" }).optional(),
+  })
+});
+
 const createEpisodeSchema = z.object({
   body: zfd.formData({
     title: zfd.text(
@@ -73,4 +96,9 @@ const updateEpisodeSchema = z.object({
   }),
 });
 
-export { getEpisodeByIdSchema, createEpisodeSchema, updateEpisodeSchema };
+export {
+  getEpisodeByIdSchema,
+  getEpisodesByCreatorIdSchema,
+  createEpisodeSchema,
+  updateEpisodeSchema,
+}

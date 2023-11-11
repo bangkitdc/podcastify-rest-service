@@ -19,6 +19,11 @@ export type ISubscriptionService = {
   ) => Promise<ISubscription[]>;
 
   getAllSubscriptions: () => Promise<ISubscription[]>;
+
+  getStatus: (
+    creator_id: number,
+    subscriber_id: number
+  ) => Promise<SUBSCRIPTION_STATUS>;
 };
 
 export type ISubscription = {
@@ -47,3 +52,12 @@ export enum SUBSCRIPTION_STATUS {
   NOT_SUBSCRIBED = "NOT SUBSCRIBED"
 }
 
+type StatusMapping = { [key in SUBSCRIPTION_STATUS]: string } & { ALL: string };
+
+export const STATUS_MAPPING: StatusMapping = {
+  [SUBSCRIPTION_STATUS.ALL]: 'All',
+  [SUBSCRIPTION_STATUS.PENDING]: 'Pending',
+  [SUBSCRIPTION_STATUS.ACCEPTED]: 'Subscribed',
+  [SUBSCRIPTION_STATUS.REJECTED]: 'Rejected',
+  [SUBSCRIPTION_STATUS.NOT_SUBSCRIBED]: 'Not Subscribed',
+};

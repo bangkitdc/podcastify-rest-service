@@ -37,6 +37,68 @@ class EpisodeService implements IEpisodeService {
     })
   }
 
+  async getEpisodesByCreatorId(creator_id: number, page: number, limit: number) {
+    const offset = (page - 1) * limit;
+
+    const totalData = await this.episodeModel.count({
+      where: {
+        creator_id: creator_id
+      },
+    });
+    
+    const episodes = await this.episodeModel.findMany({
+      where: {
+        creator_id: creator_id
+      },
+      orderBy: {
+        episode_id: 'desc'
+      },
+      select: {
+        episode_id: true,
+        title: true,
+        description: true,
+        user: {
+          select: {
+            first_name: true,
+            last_name: true
+          }
+        },
+        duration: true,
+        image_url: true,
+        audio_url: true,
+        category: { 
+          select: {
+            name: true
+          },
+        },
+      },
+      take: limit,
+      skip: offset
+    });
+
+    const totalPage = Math.ceil(totalData / limit);
+
+    if (totalPage === 0) {
+      return {
+        total: totalData,
+        current_page: 0,
+        last_page: totalPage,
+        data: episodes,
+      }
+    }
+
+    if (page > totalPage) {
+      throw new HttpError(HttpStatusCode.NotFound, "Requested page not found")
+    }
+
+    return {
+      total: totalData,
+      current_page: page,
+      last_page: totalPage,
+      data: episodes,
+    };
+  }
+
   async createEpisode(
     title: string, 
     description: string, 

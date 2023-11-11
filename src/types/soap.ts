@@ -12,6 +12,10 @@ export interface ISoapService {
     status: SUBSCRIPTION_STATUS;
   }) => Promise<IResponseModel>;
   getAllSubscriptions: () => Promise<IResponseModel>;
+  getStatus: (args: {
+    creator_id: number;
+    subscriber_id: number;
+  }) => Promise<IResponseModel>;
 
   // add more endpoint method
 }
