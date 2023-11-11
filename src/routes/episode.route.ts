@@ -5,6 +5,7 @@ import { getEpisodeByIdSchema, createEpisodeSchema, updateEpisodeSchema } from '
 import { EpisodeService } from '../services';
 import { EpisodeController } from '../controllers';
 import { AuthMiddleware } from '../middlewares';
+import { getEpisodesByCreatorIdSchema } from '../dto/episode.dto';
 
 const episodeService = new EpisodeService();
 const episodeController = new EpisodeController(episodeService);
@@ -20,6 +21,11 @@ episodeRoute
     '/episode/:episode_id',
     RequestHelper.validate(getEpisodeByIdSchema),
     RequestHelper.exceptionGuard(episodeController.getEpisodeById)
+  )
+  .get(
+    '/episode/creator/:creator_id',
+    RequestHelper.validate(getEpisodesByCreatorIdSchema),
+    RequestHelper.exceptionGuard(episodeController.getEpisodesByCreatorId)
   )
   .post(
     '/episode',
@@ -38,15 +44,5 @@ episodeRoute
     AuthMiddleware.authenticateToken,
     RequestHelper.exceptionGuard(episodeController.deleteEpisode)
   )
-  // .post(
-  //   '/login',
-  //   RequestHelper.validate(loginSchema), 
-  //   RequestHelper.exceptionGuard(episodeController.login)
-  // )
-  // .post(
-  //   '/register',
-  //   RequestHelper.validate(registerSchema),
-  //   RequestHelper.exceptionGuard(episodeController.register),
-  // );
 
 export default episodeRoute;

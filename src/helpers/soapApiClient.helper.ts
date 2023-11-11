@@ -25,10 +25,14 @@ class SoapApiClient {
         tagNameProcessors: [processors.stripPrefix],
       };
 
+      console.log(response.data);
+
       const parsedJsonResponse = await parseStringPromise(
         response.data,
         options,
       );
+
+      console.log(parsedJsonResponse);
 
       // Get the soap body and remove optional attribute(s) from <Body> element
       const soapBody = parsedJsonResponse.Envelope.Body;
