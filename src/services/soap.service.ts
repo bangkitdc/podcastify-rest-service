@@ -80,6 +80,7 @@ class SoapService implements ISoapService {
       created_at: item.createdAt,
       updated_at: item.updatedAt,
       creator_id: item.creatorID,
+      creator_name: item.creatorName,
       status: item.status,
       subscriber_id: item.subscriberID,
       subscriber_name: item.subscriberName,
@@ -113,6 +114,7 @@ class SoapService implements ISoapService {
       created_at: item.createdAt,
       updated_at: item.updatedAt,
       creator_id: item.creatorID,
+      creator_name: item.creatorName,
       status: item.status,
       subscriber_id: item.subscriberID,
       subscriber_name: item.subscriberName,
@@ -127,9 +129,7 @@ class SoapService implements ISoapService {
   }) => {
     const payload = this.createXML('getStatus', args);
 
-    console.log(payload);
     const soapResponse = await this.api.post(this.url, payload);
-    console.log(soapResponse);
 
     const parsedResponse: IResponseModel = {
       statusCode: HttpStatusCode.Ok,
@@ -139,7 +139,6 @@ class SoapService implements ISoapService {
     // Check if multiple return objects exist in the response
     let returnData = soapResponse.getStatusResponse.return;
 
-    console.log(returnData);
 
     // If returnData is null, set it to an empty array
     if (returnData == null || returnData == undefined) {
