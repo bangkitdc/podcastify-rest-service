@@ -4,6 +4,8 @@ import {
 } from '../types/subscription';
 import { SoapService } from '.';
 import { ISoapService } from '../types/soap';
+import { HttpStatusCode } from '../types/http';
+import { HttpError } from '../helpers';
 
 class SubscriptionService implements ISubscriptionService {
   private SOAP_SUBSCRIPTION_ENDPOINT = '/subscription';
@@ -57,6 +59,10 @@ class SubscriptionService implements ISubscriptionService {
       subscriber_id
     };
     const response = await this.soapService.getStatus(args);
+
+    if (response.statusCode !== HttpStatusCode.Ok) {
+      throw new HttpError(response.statusCode, "Error from external API: " + response.message);
+    }
 
     return response.data;
   }
