@@ -67,7 +67,7 @@ export type IEpisodeService = {
     category_id: number,
     duration: number,
     image_url: string,
-    audio_url: string
+    audio_url: string,
   ) => Promise<IEpisode>
 
   updateEpisode: (arg0: IEpisodeForm) => Promise<IEpisode>
