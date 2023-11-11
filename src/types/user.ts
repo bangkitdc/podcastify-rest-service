@@ -30,8 +30,16 @@ export type IUserForm = {
   password: string
 }
 
+export type IUserPagination = {
+  total: number
+  current_page: number
+  last_page: number
+  data: IUserToApp[] | null
+}
+
 export type IUserToApp = {
   user_id: number
+  email: string
   username: string
   first_name: string
   last_name: string
@@ -47,9 +55,12 @@ export type IUserService = {
   getUserById: (user_id: number) => Promise<IUser | null>
   getUserByUsername: (username: string) => Promise<IUser | null>
   getUserByEmail: (email: string) => Promise<IUser | null>
-  getCreators: (issuer_id: number) => Promise<IUserToApp[] | null> 
+  getCreatorsBySubscriberId: (issuer_id: number, page: number, limit: number) => Promise<IUserPagination | null> 
+  getCreatorWithStatus: (creator_id: number, subscriber_id: number) => Promise<IUserToApp | null>
 }
 
 export type IUserController = {
   getSelf: IRequestResponseHandler
+  getCreatorsBySubscriberId: IRequestResponseHandler
+  getCreatorWithStatus: IRequestResponseHandler
 }

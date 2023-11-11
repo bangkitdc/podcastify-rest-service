@@ -37,23 +37,82 @@ class EpisodeService implements IEpisodeService {
     })
   }
 
+  async getEpisodesByCreatorId(creator_id: number, page: number, limit: number) {
+    const offset = (page - 1) * limit;
+
+    const totalData = await this.episodeModel.count({
+      where: {
+        creator_id: creator_id
+      },
+    });
+    
+    const episodes = await this.episodeModel.findMany({
+      where: {
+        creator_id: creator_id
+      },
+      orderBy: {
+        episode_id: 'desc'
+      },
+      select: {
+        episode_id: true,
+        title: true,
+        description: true,
+        user: {
+          select: {
+            first_name: true,
+            last_name: true
+          }
+        },
+        duration: true,
+        image_url: true,
+        audio_url: true,
+        category: { 
+          select: {
+            name: true
+          },
+        },
+      },
+      take: limit,
+      skip: offset
+    });
+
+    const totalPage = Math.ceil(totalData / limit);
+
+    if (totalPage === 0) {
+      return {
+        total: totalData,
+        current_page: 0,
+        last_page: totalPage,
+        data: episodes,
+      }
+    }
+
+    if (page > totalPage) {
+      throw new HttpError(HttpStatusCode.NotFound, "Requested page not found")
+    }
+
+    return {
+      total: totalData,
+      current_page: page,
+      last_page: totalPage,
+      data: episodes,
+    };
+  }
+
   async createEpisode(
     title: string, 
     description: string, 
     creator_id: number, 
     category_id: number,
     duration: number,
-    image_url: string,
-    audio_url: string 
-  ) {
-    const isCreatorExists = await this.userService.getUserById(creator_id);
+    image_url: string = "",
+    audio_url: string ,
+  ) {    
+    
     const isCategoryExists = await this.categoryService.getCategoryById(category_id);
 
     const errors: Record<string, string[]> = {};
 
-    if (!isCreatorExists) {
-      errors.creator_id = ["Creator Id is not exists"];
-    }
 
     if (!isCategoryExists) {
       errors.category_id = ["Category Id is not exists"];
@@ -103,6 +162,54 @@ class EpisodeService implements IEpisodeService {
       );
     }
 
+    if(episodeData.image_url && episodeData.audio_url){
+      return await this.episodeModel.update({
+        where: {
+          episode_id: episodeData.episode_id
+        },
+        data: {
+          title: episodeData.title,
+          description: episodeData.description,
+          creator_id: episodeData.creator_id,
+          category_id: Number(episodeData.category_id),
+          duration: Number(episodeData.duration),
+          image_url: episodeData.image_url,
+          audio_url: episodeData.audio_url
+        }
+      })
+    }
+
+    if(episodeData.image_url){
+      return await this.episodeModel.update({
+        where: {
+          episode_id: episodeData.episode_id
+        },
+        data: {
+          title: episodeData.title,
+          description: episodeData.description,
+          creator_id: episodeData.creator_id,
+          category_id: Number(episodeData.category_id),
+          image_url: episodeData.image_url,
+        }
+      })
+    }
+
+    if(episodeData.audio_url){
+      return await this.episodeModel.update({
+        where: {
+          episode_id: episodeData.episode_id
+        },
+        data: {
+          title: episodeData.title,
+          description: episodeData.description,
+          creator_id: episodeData.creator_id,
+          category_id: Number(episodeData.category_id),
+          duration: Number(episodeData.duration),
+          audio_url: episodeData.audio_url
+        }
+      })
+    }
+
     return await this.episodeModel.update({
       where: {
         episode_id: episodeData.episode_id
@@ -111,10 +218,7 @@ class EpisodeService implements IEpisodeService {
         title: episodeData.title,
         description: episodeData.description,
         creator_id: episodeData.creator_id,
-        category_id: episodeData.category_id,
-        duration: episodeData.duration,
-        image_url: episodeData.image_url,
-        audio_url: episodeData.audio_url
+        category_id: Number(episodeData.category_id),
       }
     })
   }

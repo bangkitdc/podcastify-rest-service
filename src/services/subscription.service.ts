@@ -49,6 +49,19 @@ class SubscriptionService implements ISubscriptionService {
 
     return response.data;
   };
+  
+  getStatus = async (
+    creator_id: number,
+    subscriber_id: number
+  ) => {
+    const args = {
+      creator_id,
+      subscriber_id
+    };
+    const response = await this.soapService.getStatus(args);
+
+    return response.data;
+  }
 }
 
 export default SubscriptionService;

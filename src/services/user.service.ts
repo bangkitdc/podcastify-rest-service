@@ -1,8 +1,9 @@
 import { IUserService } from '../types/user';
 import prisma from '../models';
-import { ISubscriptionService, SUBSCRIPTION_STATUS } from '../types/subscription';
+import { ISubscriptionService, STATUS_MAPPING, SUBSCRIPTION_STATUS } from '../types/subscription';
 import { SubscriptionService } from '.';
-
+import { HttpError } from '../helpers';
+import { HttpStatusCode } from '../types/http';
 class UserService implements IUserService {
   private subscriptionService: ISubscriptionService;
   private userModel = prisma.user;
@@ -41,11 +42,24 @@ class UserService implements IUserService {
     return user;
   }
 
-  async getCreators(issuer_id: number) {
+  async getCreatorsBySubscriberId(issuer_id: number, page: number, limit: number) {
+    const offset = (page - 1) * limit;
+
+    const totalData = await this.userModel.count({
+      where: {
+        role_id: 2, // except admin
+      },
+    });
+    
     const creators = await this.userModel.findMany({
       where: {
-        role_id: 2
-      }
+        role_id: 2 // except admin
+      },
+      orderBy: {
+        user_id: 'desc'
+      },
+      take: limit,
+      skip: offset
     });
 
     const creatorsStatus = await this.subscriptionService.getAllSubscriptionBySubscriberID(
@@ -55,20 +69,71 @@ class UserService implements IUserService {
 
     // Map over creators and subscription status
     const creatorsWithStatus = creators.map((creator) => {
-      // Find the subscription status for the current creator
-      const status = creatorsStatus.find((status) => status.creator_id === creator.user_id);
+      // Find the subscription for the current creator
+      const subscription = creatorsStatus.find((subscription) => subscription.creator_id == creator.user_id);
 
       // Add subscription status to the creator
       return {
         user_id: creator.user_id,
+        email: creator.email,
         username: creator.username,
         first_name: creator.first_name,
         last_name: creator.last_name,
-        status: status ? status.status : SUBSCRIPTION_STATUS.NOT_SUBSCRIBED,
+        status: subscription ? STATUS_MAPPING[subscription.status] : STATUS_MAPPING[SUBSCRIPTION_STATUS.NOT_SUBSCRIBED],
       };
     });
 
-    return creatorsWithStatus;
+    const totalPage = Math.ceil(totalData / limit);
+
+    if (totalPage === 0) {
+      return {
+        total: totalData,
+        current_page: 0,
+        last_page: totalPage,
+        data: creatorsWithStatus,
+      }
+    }
+
+    if (page > totalPage) {
+      throw new HttpError(HttpStatusCode.NotFound, "Requested page not found")
+    }
+
+    return {
+      total: totalData,
+      current_page: page,
+      last_page: totalPage,
+      data: creatorsWithStatus,
+    };
+  }
+
+  async getCreatorWithStatus(creator_id: number, subscriber_id: number) {
+    const creator = await this.userModel.findFirst({
+      where: {
+        user_id: creator_id
+      },
+    });
+
+    if (!creator) {
+      throw new HttpError(HttpStatusCode.NotFound, "Data not found");
+    }
+
+    const creatorStatus = await this.subscriptionService.getStatus(
+      creator_id, 
+      subscriber_id
+    );
+    
+    if (!creatorStatus) {
+      throw new HttpError(HttpStatusCode.NotFound, "Data not found");
+    }
+
+    return {
+      user_id: creator.user_id,
+      email: creator.email,
+      username: creator.username,
+      first_name: creator.first_name,
+      last_name: creator.last_name,
+      status: creatorStatus ? STATUS_MAPPING[creatorStatus] : STATUS_MAPPING[SUBSCRIPTION_STATUS.NOT_SUBSCRIBED]
+    }
   }
 }
 
