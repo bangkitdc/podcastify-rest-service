@@ -125,32 +125,16 @@ class SoapService implements ISoapService {
     creator_id: number;
     subscriber_id: number;
   }) => {
-    const payload = this.createXML('getStatus', args);
+    const payload = this.createXML("getStatus", args);
 
-    console.log(payload);
     const soapResponse = await this.api.post(this.url, payload);
-    console.log(soapResponse);
+    const response = soapResponse.getStatusResponse.return;
 
     const parsedResponse: IResponseModel = {
-      statusCode: HttpStatusCode.Ok,
-      message: 'success',
+      statusCode: parseInt(response.statusCode),
+      message: response.message,
+      data: response.data
     };
-
-    // Check if multiple return objects exist in the response
-    let returnData = soapResponse.getStatusResponse.return;
-
-    console.log(returnData);
-
-    // If returnData is null, set it to an empty array
-    if (returnData == null || returnData == undefined) {
-      returnData = [];
-    }
-    
-    if (!Array.isArray(returnData)) {
-      returnData = [returnData];
-    }
-
-    parsedResponse.data = returnData['data'];
 
     return parsedResponse;
   }
