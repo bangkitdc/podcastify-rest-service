@@ -2,18 +2,17 @@ import { HttpError } from "../helpers";
 import prisma from "../models";
 import { IEpisodeService } from "../types/episode";
 import { HttpStatusCode } from "../types/http";
-import { IUserService } from "../types/user";
-import { UserService, CategoryService } from ".";
+import { CategoryService } from ".";
 import { ICategoryService } from "../types/category";
 import { IEpisodeForm } from "../types/episode";
 
 class EpisodeService implements IEpisodeService {
   private episodeModel = prisma.episode;
-  private userService: IUserService;
+  private episodeLikeModel = prisma.episodeLike;
+  private episodeCommentModel = prisma.episodeComment;
   private categoryService: ICategoryService;
 
   constructor() {
-    this.userService = new UserService();
     this.categoryService = new CategoryService();
   }
 
@@ -112,7 +111,6 @@ class EpisodeService implements IEpisodeService {
     const isCategoryExists = await this.categoryService.getCategoryById(category_id);
 
     const errors: Record<string, string[]> = {};
-
 
     if (!isCategoryExists) {
       errors.category_id = ["Category Id is not exists"];
@@ -228,7 +226,7 @@ class EpisodeService implements IEpisodeService {
       where: {
         episode_id: episode_id
       }
-    })
+    });
 
     const errors: Record<string, string[]> = {};
 
@@ -249,6 +247,78 @@ class EpisodeService implements IEpisodeService {
         episode_id: episode_id
       }
     })
+  }
+
+  async likeEpisode(episode_id: number, user_id: number) {
+    const isEpisodeLikeExists = await this.episodeLikeModel.findFirst({
+      where: {
+        episode_id: episode_id,
+        user_id: user_id
+      }
+    });
+
+    if (isEpisodeLikeExists) {
+      await this.episodeLikeModel.delete({
+        where: {
+          episode_id_user_id: {
+            episode_id: episode_id,
+            user_id: user_id
+          }
+        }
+      });
+
+      return false;
+    } else {
+      await this.episodeLikeModel.create({
+        data: {
+          episode_id: episode_id,
+          user_id: user_id
+        }
+      });
+
+      return true;
+    }
+  }
+
+  async getEpisodeLikes(episode_id: number) {
+    const isEpisodeExists = await this.episodeModel.findFirst({
+      where: {
+        episode_id: episode_id
+      }
+    });
+
+    if (!isEpisodeExists) {
+      throw new HttpError(HttpStatusCode.NotFound, 'Episode not found');
+    }
+
+    return await this.episodeLikeModel.count({
+      where: {
+        episode_id: episode_id
+      }
+    });
+  }
+
+  async createEpisodeComment(episode_id: number, user_id: number, username: string, comment_text: string) {
+    const comment = await this.episodeCommentModel.create({
+      data: {
+        episode_id: episode_id,
+        user_id: user_id,
+        username: username,
+        comment_text: comment_text
+      }
+    });
+
+    return comment;
+  }
+
+  async getEpisodeComments(episode_id: number) {
+    const comments = await this.episodeCommentModel.findMany({
+      where: {
+        episode_id: episode_id
+      }
+    });
+
+    return comments;
   }
 }
 

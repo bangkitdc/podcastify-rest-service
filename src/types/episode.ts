@@ -47,6 +47,16 @@ export type IEpisodeForm = {
   audio_url: string
 }
 
+export type IEpisodeComment = {
+  comment_id: number
+  episode_id: number
+  user_id: number
+  username: string
+  comment_text: string
+  created_at: Date
+  updated_at: Date
+}
+
 export type IEpisodeController = {
   getAllEpisodes: IRequestResponseHandler
   getEpisodeById: IRequestResponseHandler
@@ -54,6 +64,12 @@ export type IEpisodeController = {
   createEpisode: IRequestResponseHandler
   updateEpisode: IRequestResponseHandler
   deleteEpisode: IRequestResponseHandler
+
+  likeEpisode: IRequestResponseHandler
+  getEpisodeLikes: IRequestResponseHandler
+
+  createEpisodeComment: IRequestResponseHandler
+  getEpisodeComments: IRequestResponseHandler
 }
 
 export type IEpisodeService = {
@@ -72,4 +88,10 @@ export type IEpisodeService = {
 
   updateEpisode: (arg0: IEpisodeForm) => Promise<IEpisode>
   deleteEpisode: (episode_id: number) => Promise<IEpisode>
+
+  likeEpisode: (episode_id: number, user_id: number) => Promise<boolean>
+  getEpisodeLikes: (episode_id: number) => Promise<number>
+
+  createEpisodeComment: (episode_id: number, user_id: number, username: string, comment_text: string) => Promise<IEpisodeComment | null>
+  getEpisodeComments: (episode_id: number) => Promise<IEpisodeComment[] | null>
 }

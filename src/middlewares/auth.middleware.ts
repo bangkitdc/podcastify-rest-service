@@ -46,7 +46,7 @@ class AuthMiddleware {
             if (!token) {
               throw new HttpError(HttpStatusCode.Unauthorized, 'Invalid credentials');
             }
-
+          
             // Decrypt AES Key
             const encryptionKey = process.env.ENCRYPTION_KEY as string;
             
@@ -63,7 +63,7 @@ class AuthMiddleware {
             let decryptedUserId = decipher.update(encryptedUserId);
             decryptedUserId = Buffer.concat([decryptedUserId, decipher.final()]);
 
-            res.locals.id = decryptedUserId.toString('utf8');            
+            res.locals.id = decryptedUserId.toString('utf8');
             break;
           case ApiService.SOAP_SERVICE:
             expectedApiKey = process.env.SOAP_API_KEY as string;
