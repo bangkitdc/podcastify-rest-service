@@ -121,8 +121,6 @@ class UserService implements IUserService {
       creator_id, 
       subscriber_id
     );
-
-    console.log(STATUS_MAPPING[creatorStatus])
     
     if (!creatorStatus) {
       throw new HttpError(HttpStatusCode.NotFound, "Data not found");

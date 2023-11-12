@@ -2,18 +2,16 @@ import { HttpError } from "../helpers";
 import prisma from "../models";
 import { IEpisodeService } from "../types/episode";
 import { HttpStatusCode } from "../types/http";
-import { IUserService } from "../types/user";
-import { UserService, CategoryService } from ".";
+import { CategoryService } from ".";
 import { ICategoryService } from "../types/category";
 import { IEpisodeForm } from "../types/episode";
 
 class EpisodeService implements IEpisodeService {
   private episodeModel = prisma.episode;
-  private userService: IUserService;
+  private episodeLikeModel = prisma.episodeLike;
   private categoryService: ICategoryService;
 
   constructor() {
-    this.userService = new UserService();
     this.categoryService = new CategoryService();
   }
 
@@ -228,7 +226,7 @@ class EpisodeService implements IEpisodeService {
       where: {
         episode_id: episode_id
       }
-    })
+    });
 
     const errors: Record<string, string[]> = {};
 
@@ -249,6 +247,37 @@ class EpisodeService implements IEpisodeService {
         episode_id: episode_id
       }
     })
+  }
+
+  async likeEpisode(episode_id: number, user_id: number) {
+    const isEpisodeLikeExists = await this.episodeLikeModel.findFirst({
+      where: {
+        episode_id: episode_id,
+        user_id: user_id
+      }
+    });
+
+    if (isEpisodeLikeExists) {
+      await this.episodeLikeModel.delete({
+        where: {
+          episode_id_user_id: {
+            episode_id: episode_id,
+            user_id: user_id
+          }
+        }
+      });
+
+      return false;
+    } else {
+      await this.episodeLikeModel.create({
+        data: {
+          episode_id: episode_id,
+          user_id: user_id
+        }
+      });
+
+      return true;
+    }
   }
 }
 

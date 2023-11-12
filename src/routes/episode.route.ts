@@ -10,9 +10,10 @@ import {
 import { EpisodeService } from '../services';
 import { EpisodeController } from '../controllers';
 import { AuthMiddleware } from '../middlewares';
-import { getEpisodesByCreatorIdSchema } from '../dto/episode.dto';
+import { episodeLikeSchema, getEpisodesByCreatorIdSchema } from '../dto/episode.dto';
 
 import { extensions} from '../types/files';
+import { ApiService } from '../types/http';
 
 const episodeService = new EpisodeService();
 const episodeController = new EpisodeController(episodeService);
@@ -66,6 +67,15 @@ episodeRoute
     RequestHelper.validate(createEpisodeSchema),
     RequestHelper.exceptionGuard(episodeController.createEpisode)
   )
+
+  // Ini harus duluan
+  .post(
+    '/episode/like',
+    AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE),
+    RequestHelper.validate(episodeLikeSchema),
+    RequestHelper.exceptionGuard(episodeController.likeEpisode)
+  )
+
   .post(
     '/episode/:episode_id',
     AuthMiddleware.authenticateToken,
@@ -77,6 +87,13 @@ episodeRoute
     '/episode/:episode_id',
     AuthMiddleware.authenticateToken,
     RequestHelper.exceptionGuard(episodeController.deleteEpisode)
-  );
+  )
+  // .get(
+  //   '/episode/like/:episode_id',
+  //   AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE),
+  //   RequestHelper.validate(episodeLikeSchema),
+  //   RequestHelper.exceptionGuard(episodeController.likeEpisode)
+  // )
+  ;
 
 export default episodeRoute;

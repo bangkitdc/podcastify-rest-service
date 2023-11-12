@@ -96,9 +96,22 @@ const updateEpisodeSchema = z.object({
   }),
 });
 
+const episodeLikeSchema = z.object({
+  body: z.object({
+    episode_id: z.number({
+      required_error: 'Episode Id is required',
+    })
+    .min(1, {
+        message: 'Episode Id is required',
+      }),
+  }),
+});
+
 export {
   getEpisodeByIdSchema,
   getEpisodesByCreatorIdSchema,
   createEpisodeSchema,
   updateEpisodeSchema,
+
+  episodeLikeSchema,
 }

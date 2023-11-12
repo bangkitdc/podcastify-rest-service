@@ -63,6 +63,8 @@ model EpisodeLike {
   
   episode_id      Int
   user_id         Int       // external user
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
 
   episode         Episode   @relation(fields: [episode_id], references: [episode_id])
 }

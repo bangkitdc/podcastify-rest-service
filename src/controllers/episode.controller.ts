@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ResponseHelper } from '../helpers';
+import { HttpError, ResponseHelper } from '../helpers';
 import {
   IEpisodeController,
   IEpisodeForm,
@@ -15,6 +15,8 @@ class EpisodeController implements IEpisodeController {
     this.createEpisode = this.createEpisode.bind(this);
     this.updateEpisode = this.updateEpisode.bind(this);
     this.deleteEpisode = this.deleteEpisode.bind(this);
+
+    this.likeEpisode = this.likeEpisode.bind(this);
   }
 
   async getAllEpisodes(req: Request, res: Response) {
@@ -143,6 +145,28 @@ class EpisodeController implements IEpisodeController {
       episode,
     );
   }
+
+  async likeEpisode (req: Request, res: Response) {
+    console.log("hehe");
+    const {
+      episode_id
+    } = req.body;
+
+    const id = parseInt(res.locals.id);
+    throw new HttpError(HttpStatusCode.Conflict, "aaa", {id});
+
+    const isLiked = await this.episodeService.likeEpisode(episode_id, parseInt(res.locals.id));
+
+    return ResponseHelper.responseSuccess(
+      res,
+      HttpStatusCode.Ok,
+      `Episode ${isLiked ? 'Liked': 'Unliked'} successfully`
+    );
+  }
+
+  // async getLikesCount (req: Request, res: Response) {
+  //   const {  }
+  // }
 }
 
 export default EpisodeController;

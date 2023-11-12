@@ -54,6 +54,8 @@ export type IEpisodeController = {
   createEpisode: IRequestResponseHandler
   updateEpisode: IRequestResponseHandler
   deleteEpisode: IRequestResponseHandler
+
+  likeEpisode: IRequestResponseHandler
 }
 
 export type IEpisodeService = {
@@ -72,4 +74,6 @@ export type IEpisodeService = {
 
   updateEpisode: (arg0: IEpisodeForm) => Promise<IEpisode>
   deleteEpisode: (episode_id: number) => Promise<IEpisode>
+
+  likeEpisode: (episode_id: number, user_id: number) => Promise<boolean>
 }
