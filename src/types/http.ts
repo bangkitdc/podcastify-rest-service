@@ -66,7 +66,7 @@ export enum HttpStatusCode {
   NetworkAuthenticationRequired = 511,
 }
 
-export type IRequestResponseHandler = (req: Request, res: Response) => Promise<Response>
+export type IRequestResponseHandler = (req: Request, res: Response) => Promise<Response> | Promise<void> 
 
 export type IApiBaseResponseSuccess<T> = {
   status: 'success'

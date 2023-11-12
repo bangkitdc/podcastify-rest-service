@@ -11,6 +11,8 @@ class EpisodeController implements IEpisodeController {
   constructor(private episodeService: IEpisodeService) {
     this.getAllEpisodes = this.getAllEpisodes.bind(this);
     this.getEpisodeById = this.getEpisodeById.bind(this);
+    this.getEpisodeImageFileById = this.getEpisodeImageFileById.bind(this);
+    this.getEpisodeAudioFileById = this.getEpisodeAudioFileById.bind(this);
     this.getEpisodesByCreatorId = this.getEpisodesByCreatorId.bind(this);
     this.createEpisode = this.createEpisode.bind(this);
     this.updateEpisode = this.updateEpisode.bind(this);
@@ -39,6 +41,40 @@ class EpisodeController implements IEpisodeController {
       HttpStatusCode.Ok,
       'Operation success',
       episode,
+    );
+  }
+
+  async getEpisodeImageFileById(req: Request, res: Response) {
+    
+    const { episode_id } = req.params;
+    
+    const episode = await this.episodeService.getEpisodeById(
+      parseInt(episode_id),
+    );
+    
+    if(episode.image_url) {
+      return ResponseHelper.responseFileSuccess(
+        res,
+        HttpStatusCode.Ok,
+        'Operation success',
+        episode.image_url,
+      );
+    }
+  }
+
+  async getEpisodeAudioFileById(req: Request, res: Response) {
+    
+    const { episode_id } = req.params;
+    
+    const episode = await this.episodeService.getEpisodeById(
+      parseInt(episode_id),
+    );
+    
+    return ResponseHelper.responseFileSuccess(
+      res,
+      HttpStatusCode.Ok,
+      'Operation success',
+      episode.audio_url,
     );
   }
 
