@@ -38,10 +38,11 @@ class SubscriptionController implements ISubscriptionController {
     const { subscriber_id } = req.params;
     const { status } = req.query;
 
-    const result = await this.subscriptionService.getAllSubscriptionBySubscriberID(
-      Number(subscriber_id),
-      status as SUBSCRIPTION_STATUS,
-    );
+    const result =
+      await this.subscriptionService.getAllSubscriptionBySubscriberID(
+        Number(subscriber_id),
+        status as SUBSCRIPTION_STATUS,
+      );
 
     return ResponseHelper.responseSuccess(
       res,
@@ -52,8 +53,30 @@ class SubscriptionController implements ISubscriptionController {
   };
 
   getAllSubscriptions = async (req: Request, res: Response) => {
-    const result = await this.subscriptionService.getAllSubscriptions();
+    const { creator_id } = req.query;
 
+    // If there are query parameters other than creator_id, throw an error
+    const queryParams = Object.keys(req.query);
+    if (queryParams.some((param) => !['creator_id'].includes(param))) {
+      return ResponseHelper.responseError(
+        res,
+        HttpStatusCode.BadRequest,
+        'Invalid query parameter',
+      );
+    }
+    if (creator_id) {
+      const result = await this.subscriptionService.getSubscribersByCreatorID(
+        Number(creator_id),
+      );
+      return ResponseHelper.responseSuccess(
+        res,
+        HttpStatusCode.Ok,
+        'Operation success',
+        result,
+      );
+    }
+
+    const result = await this.subscriptionService.getAllSubscriptions();
     return ResponseHelper.responseSuccess(
       res,
       HttpStatusCode.Ok,
