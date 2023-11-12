@@ -9,6 +9,7 @@ import { IEpisodeForm } from "../types/episode";
 class EpisodeService implements IEpisodeService {
   private episodeModel = prisma.episode;
   private episodeLikeModel = prisma.episodeLike;
+  private episodeCommentModel = prisma.episodeComment;
   private categoryService: ICategoryService;
 
   constructor() {
@@ -110,7 +111,6 @@ class EpisodeService implements IEpisodeService {
     const isCategoryExists = await this.categoryService.getCategoryById(category_id);
 
     const errors: Record<string, string[]> = {};
-
 
     if (!isCategoryExists) {
       errors.category_id = ["Category Id is not exists"];
@@ -278,6 +278,47 @@ class EpisodeService implements IEpisodeService {
 
       return true;
     }
+  }
+
+  async getEpisodeLikes(episode_id: number) {
+    const isEpisodeExists = await this.episodeModel.findFirst({
+      where: {
+        episode_id: episode_id
+      }
+    });
+
+    if (!isEpisodeExists) {
+      throw new HttpError(HttpStatusCode.NotFound, 'Episode not found');
+    }
+
+    return await this.episodeLikeModel.count({
+      where: {
+        episode_id: episode_id
+      }
+    });
+  }
+
+  async createEpisodeComment(episode_id: number, user_id: number, username: string, comment_text: string) {
+    const comment = await this.episodeCommentModel.create({
+      data: {
+        episode_id: episode_id,
+        user_id: user_id,
+        username: username,
+        comment_text: comment_text
+      }
+    });
+
+    return comment;
+  }
+
+  async getEpisodeComments(episode_id: number) {
+    const comments = await this.episodeCommentModel.findMany({
+      where: {
+        episode_id: episode_id
+      }
+    });
+
+    return comments;
   }
 }
 

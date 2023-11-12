@@ -17,6 +17,10 @@ class EpisodeController implements IEpisodeController {
     this.deleteEpisode = this.deleteEpisode.bind(this);
 
     this.likeEpisode = this.likeEpisode.bind(this);
+    this.getEpisodeLikes = this.getEpisodeLikes.bind(this);
+
+    this.createEpisodeComment = this.createEpisodeComment.bind(this);
+    this.getEpisodeComments = this.getEpisodeComments.bind(this);
   }
 
   async getAllEpisodes(req: Request, res: Response) {
@@ -32,6 +36,11 @@ class EpisodeController implements IEpisodeController {
 
   async getEpisodeById(req: Request, res: Response) {
     const { episode_id } = req.params;
+
+    if (!parseInt(episode_id)) {
+      throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
+    }
+
     const episode = await this.episodeService.getEpisodeById(
       parseInt(episode_id),
     );
@@ -49,6 +58,11 @@ class EpisodeController implements IEpisodeController {
     const limit = parseInt(req.query.limit as string) || 10;
 
     const { creator_id } = req.params;
+
+    if (!parseInt(creator_id)) {
+      throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
+    }
+
     const episodes = await this.episodeService.getEpisodesByCreatorId(parseInt(creator_id), page, limit);
 
     return ResponseHelper.responseSuccess(
@@ -100,6 +114,10 @@ class EpisodeController implements IEpisodeController {
   async updateEpisode(req: Request, res: Response) {
     const { episode_id } = req.params;
 
+    if (!parseInt(episode_id)) {
+      throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
+    }
+
     const episodeData: IEpisodeForm = req.body;
 
     const creator_id = res.locals.user.user_id;
@@ -134,6 +152,10 @@ class EpisodeController implements IEpisodeController {
   async deleteEpisode(req: Request, res: Response) {
     const { episode_id } = req.params;
 
+    if (!parseInt(episode_id)) {
+      throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
+    }
+
     const episode = await this.episodeService.deleteEpisode(
       parseInt(episode_id),
     );
@@ -147,13 +169,9 @@ class EpisodeController implements IEpisodeController {
   }
 
   async likeEpisode (req: Request, res: Response) {
-    console.log("hehe");
     const {
       episode_id
     } = req.body;
-
-    const id = parseInt(res.locals.id);
-    throw new HttpError(HttpStatusCode.Conflict, "aaa", {id});
 
     const isLiked = await this.episodeService.likeEpisode(episode_id, parseInt(res.locals.id));
 
@@ -164,9 +182,56 @@ class EpisodeController implements IEpisodeController {
     );
   }
 
-  // async getLikesCount (req: Request, res: Response) {
-  //   const {  }
-  // }
+  async getEpisodeLikes (req: Request, res: Response) {
+    const { episode_id } = req.params;
+
+    if (!parseInt(episode_id)) {
+      throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
+    }
+
+    const count = await this.episodeService.getEpisodeLikes(parseInt(episode_id));
+
+    return ResponseHelper.responseSuccess(
+      res,
+      HttpStatusCode.Ok,
+      "Operation successful",
+      {
+        count
+      }
+    );
+  }
+
+  async createEpisodeComment (req: Request, res: Response) {
+    const { episode_id, username, comment_text } = req.body;
+
+    console.log(episode_id, comment_text);
+
+    const comment = await this.episodeService.createEpisodeComment(episode_id, parseInt(res.locals.id), username, comment_text);
+
+    return ResponseHelper.responseSuccess(
+      res,
+      HttpStatusCode.Created,
+      'Comment created successfully',
+      comment,
+    );
+  }
+
+  async getEpisodeComments (req: Request, res: Response) {
+    const { episode_id } = req.params;
+
+    if (!parseInt(episode_id)) {
+      throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
+    }
+
+    const comments = await this.episodeService.getEpisodeComments(parseInt(episode_id));
+
+    return ResponseHelper.responseSuccess(
+      res,
+      HttpStatusCode.Ok,
+      "Operation successful",
+      comments
+    );
+  }
 }
 
 export default EpisodeController;

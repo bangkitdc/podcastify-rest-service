@@ -1,4 +1,4 @@
-import { Request, Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import multer, { FileFilterCallback } from 'multer';
 
 import { RequestHelper } from '../helpers';
@@ -10,7 +10,7 @@ import {
 import { EpisodeService } from '../services';
 import { EpisodeController } from '../controllers';
 import { AuthMiddleware } from '../middlewares';
-import { episodeLikeSchema, getEpisodesByCreatorIdSchema } from '../dto/episode.dto';
+import { createEpisodeCommentSchema, episodeLikeSchema, getEpisodeCommentsSchema, getEpisodeLikesSchema, getEpisodesByCreatorIdSchema } from '../dto/episode.dto';
 
 import { extensions} from '../types/files';
 import { ApiService } from '../types/http';
@@ -68,12 +68,47 @@ episodeRoute
     RequestHelper.exceptionGuard(episodeController.createEpisode)
   )
 
-  // Ini harus duluan
+  // Ini harus duluan (prefix)
   .post(
     '/episode/like',
     AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE),
     RequestHelper.validate(episodeLikeSchema),
     RequestHelper.exceptionGuard(episodeController.likeEpisode)
+  )
+  .get(
+    '/episode/like/:episode_id',
+    (req: Request, res: Response, next: NextFunction) => {
+      const header = req.headers['x-api-key'];
+
+      if (header == process.env.APP_API_KEY) { // From Monolith
+        AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE)(req, res, next);
+      } else {
+        AuthMiddleware.authenticateToken(req, res, next);
+      }
+    },
+    RequestHelper.validate(getEpisodeLikesSchema),
+    RequestHelper.exceptionGuard(episodeController.getEpisodeLikes)
+  )
+
+  .post(
+    '/episode/comment',
+    AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE),
+    RequestHelper.validate(createEpisodeCommentSchema),
+    RequestHelper.exceptionGuard(episodeController.createEpisodeComment)
+  )
+  .get(
+    '/episode/comment/:episode_id',
+    (req: Request, res: Response, next: NextFunction) => {
+      const header = req.headers['x-api-key'];
+
+      if (header == process.env.APP_API_KEY) { // From Monolith
+        AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE)(req, res, next);
+      } else {
+        AuthMiddleware.authenticateToken(req, res, next);
+      }
+    },
+    RequestHelper.validate(getEpisodeCommentsSchema),
+    RequestHelper.exceptionGuard(episodeController.getEpisodeComments)
   )
 
   .post(
@@ -88,12 +123,6 @@ episodeRoute
     AuthMiddleware.authenticateToken,
     RequestHelper.exceptionGuard(episodeController.deleteEpisode)
   )
-  // .get(
-  //   '/episode/like/:episode_id',
-  //   AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE),
-  //   RequestHelper.validate(episodeLikeSchema),
-  //   RequestHelper.exceptionGuard(episodeController.likeEpisode)
-  // )
   ;
 
 export default episodeRoute;
