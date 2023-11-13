@@ -138,9 +138,12 @@ class SoapService implements ISoapService {
     return parsedResponse;
   };
 
-  getSubscribersByCreatorID = async (args: { creator_id: number }) => {
-    // const payload = this.createXML('getAllSubscriptions');
-    // const soapResponse = await this.api.post(this.url, payload);
+  getSubscribersByCreatorID = async (args: {
+    creator_id: number;
+    status: SUBSCRIPTION_STATUS;
+  }) => {
+    const payload = this.createXML('getSubscriptionByCreatorID', args);
+    const soapResponse = await this.api.post(this.url, payload);
 
     const parsedResponse: IResponseModel = {
       statusCode: HttpStatusCode.Ok,
@@ -148,28 +151,27 @@ class SoapService implements ISoapService {
     };
 
     // Check if multiple return objects exist in the response
-    // let returnData = soapResponse.getAllSubscriptionsResponse.return;
+    let returnData = soapResponse.getSubscriptionByCreatorIDResponse.return;
 
     // If returnData is null, set it to an empty array
-    // if (returnData == null || returnData == undefined) {
-    //   returnData = [];
-    // }
+    if (returnData == null || returnData == undefined) {
+      returnData = [];
+    }
 
-    // if (!Array.isArray(returnData)) {
-    //   returnData = [returnData];
-    // }
+    if (!Array.isArray(returnData)) {
+      returnData = [returnData];
+    }
 
-    // parsedResponse.data = returnData.map((item: ISubscriptionSOAP) => ({
-    //   created_at: item.createdAt,
-    //   updated_at: item.updatedAt,
-    //   creator_id: item.creatorID,
-    //   creator_name: item.creatorName,
-    //   status: item.status,
-    //   subscriber_id: item.subscriberID,
-    //   subscriber_name: item.subscriberName,
-    // }));
-    
-    parsedResponse.data = [];
+    parsedResponse.data = returnData.map((item: ISubscriptionSOAP) => ({
+      created_at: item.createdAt,
+      updated_at: item.updatedAt,
+      creator_id: item.creatorID,
+      creator_name: item.creatorName,
+      status: item.status,
+      subscriber_id: item.subscriberID,
+      subscriber_name: item.subscriberName,
+    }));
+
     return parsedResponse;
   };
 }

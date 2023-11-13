@@ -46,11 +46,11 @@ class SubscriptionService implements ISubscriptionService {
     return response.data;
   };
 
-  getSubscribersByCreatorID = async (creator_id: number) => {
+  getSubscribersByCreatorID = async (creator_id: number, status: SUBSCRIPTION_STATUS) => {
     const args = {
       creator_id,
+      status
     };
-
     const response =
       await this.soapService.getSubscribersByCreatorID(args);
 

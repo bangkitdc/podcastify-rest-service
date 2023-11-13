@@ -26,7 +26,10 @@ export type ISubscriptionService = {
     subscriber_id: number,
   ) => Promise<SUBSCRIPTION_STATUS>;
 
-  getSubscribersByCreatorID: (creator_id: number) => Promise<ISubscription[]>;
+  getSubscribersByCreatorID: (
+    creator_id: number,
+    status: SUBSCRIPTION_STATUS,
+  ) => Promise<ISubscription[]>;
 };
 
 export type ISubscription = {
