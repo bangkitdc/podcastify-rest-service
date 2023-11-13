@@ -146,6 +146,12 @@ class PrismaClientKnownRequestErrorHandler extends ErrorHandler {
         break;
       }
 
+      case 'P2025': {
+        code = HttpStatusCode.NotFound;
+        message = error.message;
+        break;
+      }
+
       default:
         message = error.message;
         break;
