@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { HttpError, ResponseHelper } from '../helpers';
+import { ResponseHelper } from '../helpers';
 import {
   IEpisodeController,
   IEpisodeForm,
@@ -35,10 +35,6 @@ class EpisodeController implements IEpisodeController {
 
   async getEpisodeById(req: Request, res: Response) {
     const { episode_id } = req.params;
-
-    if (!parseInt(episode_id)) {
-      throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
-    }
 
     const episode = await this.episodeService.getEpisodeById(
       parseInt(episode_id),
@@ -91,10 +87,6 @@ class EpisodeController implements IEpisodeController {
 
     const { creator_id } = req.params;
 
-    if (!parseInt(creator_id)) {
-      throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
-    }
-
     const episodes = await this.episodeService.getEpisodesByCreatorId(parseInt(creator_id), page, limit);
 
     return ResponseHelper.responseSuccess(
@@ -146,10 +138,6 @@ class EpisodeController implements IEpisodeController {
   async updateEpisode(req: Request, res: Response) {
     const { episode_id } = req.params;
 
-    if (!parseInt(episode_id)) {
-      throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
-    }
-
     const episodeData: IEpisodeForm = req.body;
 
     const creator_id = res.locals.user.user_id;
@@ -183,10 +171,6 @@ class EpisodeController implements IEpisodeController {
 
   async deleteEpisode(req: Request, res: Response) {
     const { episode_id } = req.params;
-
-    if (!parseInt(episode_id)) {
-      throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
-    }
 
     const episode = await this.episodeService.deleteEpisode(
       parseInt(episode_id),

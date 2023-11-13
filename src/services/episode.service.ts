@@ -308,7 +308,7 @@ class EpisodeService implements IEpisodeService {
   }
 
   async likeEpisode(episode_id: number, user_id: number) {
-    const isEpisodeLikeExists = await this.episodeLikeModel.findFirst({
+    const isEpisodeLikeExists = await this.episodeLikeModel.findFirstOrThrow({
       where: {
         episode_id: episode_id,
         user_id: user_id
