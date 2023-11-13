@@ -28,7 +28,7 @@ class EpisodeService implements IEpisodeService {
     return episodeList;
   }
 
-  async getEpisodeById(episode_id: number) {
+  async getEpisodeById(episode_id: number, user_id?: number) {
     const episode = await this.episodeModel.findFirstOrThrow({
       where: {
         episode_id: episode_id
@@ -73,9 +73,24 @@ class EpisodeService implements IEpisodeService {
       }
     });
 
-    return {
-      ...episode,
-      episodeLikesCount: likesCount
+    if (user_id) { // From monolith
+      const isEpisodeLikedByUser = await this.episodeLikeModel.findFirst({
+        where: {
+          episode_id: episode_id,
+          user_id: user_id
+        }
+      });
+
+      return {
+        ...episode,
+        episodeLikesCount: likesCount,
+        episodeLiked: isEpisodeLikedByUser ? true : false
+      }
+    } else { // From SPA
+      return {
+        ...episode,
+        episodeLikesCount: likesCount
+      }
     }
   }
 
