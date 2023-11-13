@@ -4,7 +4,7 @@ import { UserService } from "../services";
 import { AuthMiddleware } from "../middlewares";
 import { RequestHelper } from "../helpers";
 import { ApiService } from "../types/http";
-import { getCreatorWithStatusSchema, getCreatorsBySubscriberIdSchema } from "../dto/user.dto";
+import { getCreatorWithStatusSchema, getCreatorsBySubscriberIdSchema } from "../dto";
 
 const userService = new UserService();
 const userController = new UserController(userService);
