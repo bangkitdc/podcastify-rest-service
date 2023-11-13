@@ -67,6 +67,7 @@ class SubscriptionController implements ISubscriptionController {
     if (creator_id) {
       const result = await this.subscriptionService.getSubscribersByCreatorID(
         Number(creator_id),
+        SUBSCRIPTION_STATUS.ACCEPTED
       );
       return ResponseHelper.responseSuccess(
         res,
