@@ -23,8 +23,13 @@ export type ISubscriptionService = {
 
   getStatus: (
     creator_id: number,
-    subscriber_id: number
+    subscriber_id: number,
   ) => Promise<SUBSCRIPTION_STATUS>;
+
+  getSubscribersByCreatorID: (
+    creator_id: number,
+    status: SUBSCRIPTION_STATUS,
+  ) => Promise<ISubscription[]>;
 };
 
 export type ISubscription = {
@@ -45,14 +50,14 @@ export type ISubscriptionSOAP = {
   subscriberID: number;
   subscriberName: string;
   status: SUBSCRIPTION_STATUS;
-}
+};
 
 export enum SUBSCRIPTION_STATUS {
-  ALL = "ALL",
-  PENDING = "PENDING",
-  ACCEPTED = "ACCEPTED",
-  REJECTED = "REJECTED",
-  NOT_SUBSCRIBED = "NOT_SUBSCRIBED"
+  ALL = 'ALL',
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  NOT_SUBSCRIBED = 'NOT_SUBSCRIBED',
 }
 
 type StatusMapping = { [key in SUBSCRIPTION_STATUS]: string } & { ALL: string };
