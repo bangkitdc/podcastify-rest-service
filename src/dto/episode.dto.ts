@@ -107,17 +107,6 @@ const episodeLikeSchema = z.object({
   }),
 });
 
-const getEpisodeLikesSchema = z.object({
-  params: z.object({
-    episode_id: z.string({
-      required_error: 'Episode Id is required',
-    })
-    .min(1, {
-      message: 'Episode Id is required',
-    }),
-  }),
-});
-
 const createEpisodeCommentSchema = z.object({
   body: z.object({
     episode_id: z.number({
@@ -141,17 +130,6 @@ const createEpisodeCommentSchema = z.object({
   })
 });
 
-const getEpisodeCommentsSchema = z.object({
-  params: z.object({
-    episode_id: z.string({
-      required_error: 'Episode Id is required',
-    })
-    .min(1, {
-      message: 'Episode Id is required',
-    }),
-  }),
-});
-
 export {
   getEpisodeByIdSchema,
   getEpisodesByCreatorIdSchema,
@@ -159,8 +137,5 @@ export {
   updateEpisodeSchema,
 
   episodeLikeSchema,
-  getEpisodeLikesSchema,
-
   createEpisodeCommentSchema,
-  getEpisodeCommentsSchema
 }

@@ -1,4 +1,4 @@
-import prisma from "../models";
+import { prisma } from "../models";
 import { ICategoryService } from "../types/category";
 
 class CategoryService implements ICategoryService {

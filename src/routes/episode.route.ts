@@ -6,11 +6,13 @@ import {
   getEpisodeByIdSchema,
   createEpisodeSchema,
   updateEpisodeSchema,
+  createEpisodeCommentSchema, 
+  episodeLikeSchema, 
+  getEpisodesByCreatorIdSchema
 } from '../dto';
 import { EpisodeService } from '../services';
 import { EpisodeController } from '../controllers';
 import { AuthMiddleware } from '../middlewares';
-import { createEpisodeCommentSchema, episodeLikeSchema, getEpisodeCommentsSchema, getEpisodeLikesSchema, getEpisodesByCreatorIdSchema } from '../dto/episode.dto';
 
 import { extensions} from '../types/files';
 import { ApiService } from '../types/http';
@@ -22,7 +24,7 @@ const episodeRoute = Router();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'src/storage');
+    cb(null, 'src/public');
   },
   filename: (req, file, cb) => {
     const extension = extensions[file.mimetype]
@@ -52,18 +54,17 @@ episodeRoute
   )
   .get(
     '/episode/:episode_id',
+    (req: Request, res: Response, next: NextFunction) => {
+      const header = req.headers['x-api-key'];
+
+      if (header == process.env.APP_API_KEY) { // From Monolith
+        AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE)(req, res, next);
+      } else {
+        AuthMiddleware.authenticateToken(req, res, next);
+      }
+    },
     RequestHelper.validate(getEpisodeByIdSchema),
     RequestHelper.exceptionGuard(episodeController.getEpisodeById),
-  )
-  .get(
-    '/episode/downloadImage/:episode_id',
-    RequestHelper.validate(getEpisodeByIdSchema),
-    RequestHelper.exceptionGuard(episodeController.getEpisodeImageFileById),
-  )
-  .get(
-    '/episode/downloadAudio/:episode_id',
-    RequestHelper.validate(getEpisodeByIdSchema),
-    RequestHelper.exceptionGuard(episodeController.getEpisodeAudioFileById),
   )
   .get(
     '/episode/creator/:creator_id',
@@ -85,40 +86,12 @@ episodeRoute
     RequestHelper.validate(episodeLikeSchema),
     RequestHelper.exceptionGuard(episodeController.likeEpisode)
   )
-  .get(
-    '/episode/like/:episode_id',
-    (req: Request, res: Response, next: NextFunction) => {
-      const header = req.headers['x-api-key'];
-
-      if (header == process.env.APP_API_KEY) { // From Monolith
-        AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE)(req, res, next);
-      } else {
-        AuthMiddleware.authenticateToken(req, res, next);
-      }
-    },
-    RequestHelper.validate(getEpisodeLikesSchema),
-    RequestHelper.exceptionGuard(episodeController.getEpisodeLikes)
-  )
 
   .post(
     '/episode/comment',
     AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE),
     RequestHelper.validate(createEpisodeCommentSchema),
     RequestHelper.exceptionGuard(episodeController.createEpisodeComment)
-  )
-  .get(
-    '/episode/comment/:episode_id',
-    (req: Request, res: Response, next: NextFunction) => {
-      const header = req.headers['x-api-key'];
-
-      if (header == process.env.APP_API_KEY) { // From Monolith
-        AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE)(req, res, next);
-      } else {
-        AuthMiddleware.authenticateToken(req, res, next);
-      }
-    },
-    RequestHelper.validate(getEpisodeCommentsSchema),
-    RequestHelper.exceptionGuard(episodeController.getEpisodeComments)
   )
 
   .post(

@@ -1,5 +1,5 @@
 import { HttpError } from "../helpers";
-import prisma from "../models";
+import { prisma } from "../models";
 import { IEpisodeService } from "../types/episode";
 import { HttpStatusCode } from "../types/http";
 import { CategoryService } from ".";
@@ -29,11 +29,54 @@ class EpisodeService implements IEpisodeService {
   }
 
   async getEpisodeById(episode_id: number) {
-    return await this.episodeModel.findFirstOrThrow({
+    const episode = await this.episodeModel.findFirstOrThrow({
+      where: {
+        episode_id: episode_id
+      },
+      select: {
+        episode_id: true,
+        title: true,
+        description: true,
+        user: {
+          select: {
+            first_name: true,
+            last_name: true
+          }
+        },
+        duration: true,
+        image_url: true,
+        audio_url: true,
+        category: { 
+          select: {
+            name: true
+          },
+        },
+
+        episodeComments: {
+          orderBy: {
+            comment_id: 'desc'
+          },
+          select: {
+            comment_id: true,
+            username: true,
+            comment_text: true,
+            created_at: true,
+            updated_at: true
+          }
+        }
+      }
+    });
+
+    const likesCount = await this.episodeLikeModel.count({
       where: {
         episode_id: episode_id
       }
-    })
+    });
+
+    return {
+      ...episode,
+      episodeLikesCount: likesCount
+    }
   }
 
   async getEpisodesByCreatorId(creator_id: number, page: number, limit: number) {
@@ -280,24 +323,6 @@ class EpisodeService implements IEpisodeService {
     }
   }
 
-  async getEpisodeLikes(episode_id: number) {
-    const isEpisodeExists = await this.episodeModel.findFirst({
-      where: {
-        episode_id: episode_id
-      }
-    });
-
-    if (!isEpisodeExists) {
-      throw new HttpError(HttpStatusCode.NotFound, 'Episode not found');
-    }
-
-    return await this.episodeLikeModel.count({
-      where: {
-        episode_id: episode_id
-      }
-    });
-  }
-
   async createEpisodeComment(episode_id: number, user_id: number, username: string, comment_text: string) {
     const comment = await this.episodeCommentModel.create({
       data: {
@@ -309,16 +334,6 @@ class EpisodeService implements IEpisodeService {
     });
 
     return comment;
-  }
-
-  async getEpisodeComments(episode_id: number) {
-    const comments = await this.episodeCommentModel.findMany({
-      where: {
-        episode_id: episode_id
-      }
-    });
-
-    return comments;
   }
 }
 

@@ -19,10 +19,7 @@ class EpisodeController implements IEpisodeController {
     this.deleteEpisode = this.deleteEpisode.bind(this);
 
     this.likeEpisode = this.likeEpisode.bind(this);
-    this.getEpisodeLikes = this.getEpisodeLikes.bind(this);
-
     this.createEpisodeComment = this.createEpisodeComment.bind(this);
-    this.getEpisodeComments = this.getEpisodeComments.bind(this);
   }
 
   async getAllEpisodes(req: Request, res: Response) {
@@ -218,24 +215,24 @@ class EpisodeController implements IEpisodeController {
     );
   }
 
-  async getEpisodeLikes (req: Request, res: Response) {
-    const { episode_id } = req.params;
+  // async getEpisodeLikes (req: Request, res: Response) {
+  //   const { episode_id } = req.params;
 
-    if (!parseInt(episode_id)) {
-      throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
-    }
+  //   if (!parseInt(episode_id)) {
+  //     throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
+  //   }
 
-    const count = await this.episodeService.getEpisodeLikes(parseInt(episode_id));
+  //   const count = await this.episodeService.getEpisodeLikes(parseInt(episode_id));
 
-    return ResponseHelper.responseSuccess(
-      res,
-      HttpStatusCode.Ok,
-      "Operation successful",
-      {
-        count
-      }
-    );
-  }
+  //   return ResponseHelper.responseSuccess(
+  //     res,
+  //     HttpStatusCode.Ok,
+  //     "Operation successful",
+  //     {
+  //       count
+  //     }
+  //   );
+  // }
 
   async createEpisodeComment (req: Request, res: Response) {
     const { episode_id, username, comment_text } = req.body;
@@ -252,22 +249,22 @@ class EpisodeController implements IEpisodeController {
     );
   }
 
-  async getEpisodeComments (req: Request, res: Response) {
-    const { episode_id } = req.params;
+  // async getEpisodeComments (req: Request, res: Response) {
+  //   const { episode_id } = req.params;
 
-    if (!parseInt(episode_id)) {
-      throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
-    }
+  //   if (!parseInt(episode_id)) {
+  //     throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
+  //   }
 
-    const comments = await this.episodeService.getEpisodeComments(parseInt(episode_id));
+  //   const comments = await this.episodeService.getEpisodeComments(parseInt(episode_id));
 
-    return ResponseHelper.responseSuccess(
-      res,
-      HttpStatusCode.Ok,
-      "Operation successful",
-      comments
-    );
-  }
+  //   return ResponseHelper.responseSuccess(
+  //     res,
+  //     HttpStatusCode.Ok,
+  //     "Operation successful",
+  //     comments
+  //   );
+  // }
 }
 
 export default EpisodeController;

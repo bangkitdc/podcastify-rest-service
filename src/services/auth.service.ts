@@ -1,5 +1,5 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import prisma from '../models';
+import { prisma } from '../models';
 import { compare, genSalt, hash } from 'bcryptjs';
 
 import { IAuthService } from '../types/auth';

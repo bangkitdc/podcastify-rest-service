@@ -57,6 +57,36 @@ export type IEpisodeComment = {
   updated_at: Date
 }
 
+export type IEpisodeCommentLessData = {
+  comment_id: number
+  username: string
+  comment_text: string
+  created_at: Date
+  updated_at: Date
+}
+
+export type IEpisodeFullData = {
+  episode_id: number
+  title: string
+  description: string
+  user: {
+    first_name: string
+    last_name: string
+  }    
+  category: {
+    name: string
+  }
+  duration: number     
+  image_url?: string | null
+  audio_url: string
+
+  // Comments
+  episodeComments: IEpisodeCommentLessData[]
+
+  // Likes
+  episodeLikesCount: number
+}
+
 export type IEpisodeController = {
   getAllEpisodes: IRequestResponseHandler
   getEpisodeById: IRequestResponseHandler
@@ -66,15 +96,12 @@ export type IEpisodeController = {
   deleteEpisode: IRequestResponseHandler
 
   likeEpisode: IRequestResponseHandler
-  getEpisodeLikes: IRequestResponseHandler
-
   createEpisodeComment: IRequestResponseHandler
-  getEpisodeComments: IRequestResponseHandler
 }
 
 export type IEpisodeService = {
   getAllEpisodes: () => Promise<IEpisode[]>
-  getEpisodeById: (episode_id: number) => Promise<IEpisode>
+  getEpisodeById: (episode_id: number) => Promise<IEpisodeFullData>
   getEpisodesByCreatorId: (creator_id: number, page: number, limit: number) => Promise<IEpisodePagination | null> 
   createEpisode: (
     title: string, 
@@ -90,8 +117,5 @@ export type IEpisodeService = {
   deleteEpisode: (episode_id: number) => Promise<IEpisode>
 
   likeEpisode: (episode_id: number, user_id: number) => Promise<boolean>
-  getEpisodeLikes: (episode_id: number) => Promise<number>
-
   createEpisodeComment: (episode_id: number, user_id: number, username: string, comment_text: string) => Promise<IEpisodeComment | null>
-  getEpisodeComments: (episode_id: number) => Promise<IEpisodeComment[] | null>
 }

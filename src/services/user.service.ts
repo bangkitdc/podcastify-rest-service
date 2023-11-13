@@ -1,5 +1,5 @@
 import { IUserService } from '../types/user';
-import prisma from '../models';
+import { prisma } from '../models';
 import { ISubscriptionService, STATUS_MAPPING, SUBSCRIPTION_STATUS } from '../types/subscription';
 import { SubscriptionService } from '.';
 import { HttpError } from '../helpers';
