@@ -72,7 +72,8 @@ export type IEpisodeFullData = {
   user: {
     first_name: string
     last_name: string
-  }    
+  }
+  creator_id: number    
   category: {
     name: string
   }
@@ -88,6 +89,8 @@ export type IEpisodeFullData = {
 
   // Like status
   episodeLiked?: boolean
+
+  created_at: Date
 }
 
 export type IEpisodeController = {
