@@ -42,6 +42,7 @@ class EpisodeController implements IEpisodeController {
 
     const episode = await this.episodeService.getEpisodeById(
       parseInt(episode_id),
+      parseInt(res.locals.id)
     );
 
     return ResponseHelper.responseSuccess(
@@ -53,7 +54,6 @@ class EpisodeController implements IEpisodeController {
   }
 
   async getEpisodeImageFileById(req: Request, res: Response) {
-    
     const { episode_id } = req.params;
     
     const episode = await this.episodeService.getEpisodeById(
@@ -71,7 +71,6 @@ class EpisodeController implements IEpisodeController {
   }
 
   async getEpisodeAudioFileById(req: Request, res: Response) {
-    
     const { episode_id } = req.params;
     
     const episode = await this.episodeService.getEpisodeById(
@@ -215,25 +214,6 @@ class EpisodeController implements IEpisodeController {
     );
   }
 
-  // async getEpisodeLikes (req: Request, res: Response) {
-  //   const { episode_id } = req.params;
-
-  //   if (!parseInt(episode_id)) {
-  //     throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
-  //   }
-
-  //   const count = await this.episodeService.getEpisodeLikes(parseInt(episode_id));
-
-  //   return ResponseHelper.responseSuccess(
-  //     res,
-  //     HttpStatusCode.Ok,
-  //     "Operation successful",
-  //     {
-  //       count
-  //     }
-  //   );
-  // }
-
   async createEpisodeComment (req: Request, res: Response) {
     const { episode_id, username, comment_text } = req.body;
 
@@ -248,23 +228,6 @@ class EpisodeController implements IEpisodeController {
       comment,
     );
   }
-
-  // async getEpisodeComments (req: Request, res: Response) {
-  //   const { episode_id } = req.params;
-
-  //   if (!parseInt(episode_id)) {
-  //     throw new HttpError(HttpStatusCode.MethodNotAllowed, "Method not allowed");
-  //   }
-
-  //   const comments = await this.episodeService.getEpisodeComments(parseInt(episode_id));
-
-  //   return ResponseHelper.responseSuccess(
-  //     res,
-  //     HttpStatusCode.Ok,
-  //     "Operation successful",
-  //     comments
-  //   );
-  // }
 }
 
 export default EpisodeController;

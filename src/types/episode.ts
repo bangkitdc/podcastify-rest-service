@@ -85,6 +85,9 @@ export type IEpisodeFullData = {
 
   // Likes
   episodeLikesCount: number
+
+  // Like status
+  episodeLiked?: boolean
 }
 
 export type IEpisodeController = {
@@ -101,7 +104,7 @@ export type IEpisodeController = {
 
 export type IEpisodeService = {
   getAllEpisodes: () => Promise<IEpisode[]>
-  getEpisodeById: (episode_id: number) => Promise<IEpisodeFullData>
+  getEpisodeById: (episode_id: number, user_id?: number) => Promise<IEpisodeFullData>
   getEpisodesByCreatorId: (creator_id: number, page: number, limit: number) => Promise<IEpisodePagination | null> 
   createEpisode: (
     title: string, 
