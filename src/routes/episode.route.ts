@@ -24,7 +24,7 @@ const episodeRoute = Router();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'src/public');
+    cb(null, 'src/storage');
   },
   filename: (req, file, cb) => {
     const extension = extensions[file.mimetype]
@@ -105,6 +105,17 @@ episodeRoute
     '/episode/:episode_id',
     AuthMiddleware.authenticateToken,
     RequestHelper.exceptionGuard(episodeController.deleteEpisode)
+  )
+
+  .get(
+    '/episode/downloadImage/:episode_id',
+    RequestHelper.validate(getEpisodeByIdSchema),
+    RequestHelper.exceptionGuard(episodeController.getEpisodeImageFileById),
+  )
+  .get(
+    '/episode/downloadAudio/:episode_id',
+    RequestHelper.validate(getEpisodeByIdSchema),
+    RequestHelper.exceptionGuard(episodeController.getEpisodeAudioFileById),
   )
   ;
 

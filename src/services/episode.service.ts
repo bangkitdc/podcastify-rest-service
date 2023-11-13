@@ -46,11 +46,13 @@ class EpisodeService implements IEpisodeService {
         duration: true,
         image_url: true,
         audio_url: true,
+        creator_id: true,
         category: { 
           select: {
             name: true
           },
         },
+        created_at:true,
 
         episodeComments: {
           orderBy: {

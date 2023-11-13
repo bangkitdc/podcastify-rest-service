@@ -35,13 +35,24 @@ class SubscriptionService implements ISubscriptionService {
     subscriber_id: number,
     status: SUBSCRIPTION_STATUS,
   ) => {
-
     const args = {
       subscriber_id,
       status,
     };
 
-    const response = await this.soapService.getAllSubscriptionBySubscriberID(args);
+    const response =
+      await this.soapService.getAllSubscriptionBySubscriberID(args);
+
+    return response.data;
+  };
+
+  getSubscribersByCreatorID = async (creator_id: number, status: SUBSCRIPTION_STATUS) => {
+    const args = {
+      creator_id,
+      status
+    };
+    const response =
+      await this.soapService.getSubscribersByCreatorID(args);
 
     return response.data;
   };
@@ -51,23 +62,23 @@ class SubscriptionService implements ISubscriptionService {
 
     return response.data;
   };
-  
-  getStatus = async (
-    creator_id: number,
-    subscriber_id: number
-  ) => {
+
+  getStatus = async (creator_id: number, subscriber_id: number) => {
     const args = {
       creator_id,
-      subscriber_id
+      subscriber_id,
     };
     const response = await this.soapService.getStatus(args);
 
     if (response.statusCode !== HttpStatusCode.Ok) {
-      throw new HttpError(response.statusCode, "Error from external API: " + response.message);
+      throw new HttpError(
+        response.statusCode,
+        'Error from external API: ' + response.message,
+      );
     }
 
     return response.data;
-  }
+  };
 }
 
 export default SubscriptionService;
