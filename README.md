@@ -87,3 +87,6 @@ Please refer here [link postman] to get the full versions of the endpoints.
 | Likes & Comments                    |                        |                            |
 | Error Handling and Data Validation  |                        |                            |
 | Cache                               |                        |                            |
+
+## Copyright
+2023 © Podcastify. All Rights Reserved.
