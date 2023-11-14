@@ -146,11 +146,11 @@ class EpisodeController implements IEpisodeController {
     let audio_url = '';
     
     if (Array.isArray(req.files)) {
-      const audioFile = req.files[0];
-      const imageFile = req.files[1] ?? ''
+      const audioFile = req.files.find(file => file.fieldname === 'audio_file');
+      const imageFile = req.files.find(file => file.fieldname === 'image_file');
 
-      image_url = imageFile ? imageFile.filename : ''
-      audio_url =  audioFile ? audioFile.filename : ''
+      image_url = imageFile ? imageFile.filename : (episodeData.image_url ?? '')
+      audio_url =  audioFile ? audioFile.filename : episodeData.audio_url
     }
     
     episodeData.image_url = image_url;
