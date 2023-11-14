@@ -48,6 +48,7 @@ services:
       - 6379:6379
     networks:
       - podcastify-rest
+    command: redis-server --requirepass ${REDIS_PASSWORD}
 
 volumes:
   pgdata:

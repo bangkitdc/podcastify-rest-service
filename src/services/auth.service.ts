@@ -9,6 +9,7 @@ import { AuthHelper, HttpError } from '../helpers';
 import { UserService } from '.';
 import { jwtRefreshToken } from '../configs/jwt';
 import { Response } from 'express';
+import CacheHelper from '../helpers/cache.helper';
 
 class AuthService implements IAuthService {
   private userService: IUserService;
@@ -95,6 +96,9 @@ class AuthService implements IAuthService {
         password: hashedPassword
       },
     });
+
+    // Delete each key
+    await CacheHelper.deleteKeysByPattern('creators');
 
     return;
   }

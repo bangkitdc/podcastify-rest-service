@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { IAuthController, IAuthService } from '../types/auth';
 import { HttpStatusCode } from '../types/http';
 import { AuthHelper, ResponseHelper } from '../helpers';
+import { client } from '../models';
 
 class AuthController implements IAuthController {
   constructor(private authService: IAuthService) {
@@ -52,6 +53,9 @@ class AuthController implements IAuthController {
   }
 
   async logout(req: Request, res: Response) {
+    // Delete key
+    await client.del(`user:${res.locals.user.user_id}`);
+
     AuthHelper.sendRefreshToken(res, "");
 
     return ResponseHelper.responseSuccess(

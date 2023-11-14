@@ -4,22 +4,20 @@ import { zfd } from 'zod-form-data';
 const getEpisodeByIdSchema = z.object({
   params: z.object({
     episode_id: z
-      .string({
-        required_error: 'Params Episode Id is required',
-      })
-      .min(1, {
-        message: 'Params Episode Id is required',
-      }),
+      .string().refine((value) => {
+        const parsedValue = Number(value);
+        return !isNaN(parsedValue) && parsedValue > 0;
+      }, { message: "Invalid Params Episode Id" }),
   }),
 });
 
 const getEpisodesByCreatorIdSchema = z.object({
   params: z.object({
-    creator_id: z.string({
-      required_error: "Params Creator Id is required"
-    }).min(1, {
-      message: "Params Creator Id is required"
-    }),
+    creator_id: z
+    .string().refine((value) => {
+      const parsedValue = Number(value);
+      return !isNaN(parsedValue) && parsedValue > 0;
+    }, { message: "Invalid Params Creator Id" }),
   }),
 
   // pagination
@@ -69,6 +67,14 @@ const createEpisodeSchema = z.object({
 });
 
 const updateEpisodeSchema = z.object({
+  params: z.object({
+    episode_id: z
+      .string().refine((value) => {
+        const parsedValue = Number(value);
+        return !isNaN(parsedValue) && parsedValue > 0;
+      }, { message: "Invalid Params Episode Id" }),
+  }),
+
   body: z.object({
     title: z
       .string({
@@ -87,7 +93,7 @@ const updateEpisodeSchema = z.object({
       }),
 
     category_id: z
-      .string({
+      .number({
         required_error: 'Category Id is required',
       })
       .min(1, {
