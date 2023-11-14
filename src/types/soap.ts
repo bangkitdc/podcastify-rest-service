@@ -8,6 +8,10 @@ export interface ISoapService {
     subscriber_id: number;
     status: SUBSCRIPTION_STATUS;
   }) => Promise<IResponseModel>;
+  getAllSubscriptionBySubscriberID: (args: {
+    subscriber_id: number;
+    status: SUBSCRIPTION_STATUS;
+  }) => Promise<IResponseModel>;
   getAllSubscriptions: () => Promise<IResponseModel>;
   getStatus: (args: {
     creator_id: number;
