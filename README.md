@@ -81,7 +81,7 @@ Please refer here [link postman] to get the full versions of the endpoints.
 
 ## Tasking
 | 13521055                            | 13521072               | 13521102                   |
-| ----------------------------------- | :--------------------: | -------------------------- |
+| :---------------------------------: | :--------------------: | :------------------------: |
 | Setup Docker, DB, and Structure     | CRUD Premium Episode   | Subscription               |
 | Authentication & Authorization      | Static Files           |                            |
 | Likes & Comments                    |                        |                            |
