@@ -7,6 +7,7 @@ Podcastify REST Service is an end-to-end service for Podcastify Premium App (SPA
 2. <b>Subscription</b> </br> The admin maintains a list of users on the Podcastify App who subscribe to specific creators. The admin has the authority to approve or reject subscription requests from users. Once approved, subscribers gain access to all premium episodes produced by the subscribed creator.
 3. <b>Likes</b> </br> In addition to listening to premium episodes, users of the Podcastify App can express their appreciation for episodes by 'liking' them. On Podcastify Premium App, creators have visibility into the number of likes received for each premium podcast episode.
 4. <b>Comments</b> </br> Alongside the 'likes' feature, users can also leave comments on premium episodes. Creators can view these comments within the Podcastify Premium App.
+5. <b>Subscriber Visibility</b> </br> Creators have the ability to view the list of users who are subscribed to them on the Podcastify Premium App.
 
 ## DB Schema
 [Belom]
@@ -37,7 +38,7 @@ Please refer here [link postman] to get the full versions of the endpoints.
 | GET | /episode/:episode_id | Get Specific Episode | SPA & Monolith |
 | POST | /episode/:episode_id | Update Episode | SPA |
 | DELETE | /episode/:episode_id | Delete Episode | SPA |
-| GET | /episode/creator/:creator_id | Get All Episodes by Creator Id | SPA & Monolith |
+| GET | /episode/creator/:creator_id | Get All Episodes by Creator ID | SPA & Monolith |
 | POST | /episode/like | Like and Unlike Episode | Monolith |
 | POST | /episode/comment | Comment Episode | Monolith |
 | GET | /episode/downloadImage/:episode_id | Get Static Image Files | SPA & Monolith |
@@ -47,9 +48,8 @@ Please refer here [link postman] to get the full versions of the endpoints.
 |Method| URL | Explanation | Consumer |
 |:--:|:--|:--|:--:|
 | GET | /subscription | Get All Subscriptions | SPA |
-| PATCH | /subscription | Approve Subscription | SPA |
-| GET | /subscription/:subscriber_id | Get All Subscriptions by Subscriber Id | | 
-| GET | by creator [belom] | |
+| GET | /subscription?creator_id= | Get All Subscriptions by Creator ID | SPA |
+| PATCH | /subscription | Approve Subscription | SPA | 
 
 ## Tech Stacks  
 1. Docker
@@ -83,7 +83,7 @@ Please refer here [link postman] to get the full versions of the endpoints.
 | 13521055                            | 13521072               | 13521102                   |
 | :---------------------------------- | :--------------------- | :------------------------- |
 | Setup Docker, DB, and Structure     | CRUD Premium Episode   | Subscription               |
-| Authentication & Authorization      | Static Files           |                            |
+| Authentication & Authorization      | Static Files           | Soap Client Handler        |
 | Likes & Comments                    |                        |                            |
 | Error Handling and Data Validation  |                        |                            |
 | Cache                               |                        |                            |
