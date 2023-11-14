@@ -23,7 +23,7 @@ class EpisodeController implements IEpisodeController {
   }
 
   async getAllEpisodes(req: Request, res: Response) {
-    const data = await this.episodeService.getAllEpisodes();
+    const data = await this.episodeService.getAllEpisodes(parseInt(res.locals.user.user_id));
 
     return ResponseHelper.responseSuccess(
       res,

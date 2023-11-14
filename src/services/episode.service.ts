@@ -16,13 +16,14 @@ class EpisodeService implements IEpisodeService {
     this.categoryService = new CategoryService();
   }
 
-  async getAllEpisodes() {
+  async getAllEpisodes(creator_id: number) {
     const episodeList = await this.episodeModel.findMany({
-      orderBy: [
-        {
-          episode_id: 'asc'
-        }
-      ]
+      where: {
+        creator_id: creator_id,
+      },
+      orderBy: {
+        episode_id: 'desc'
+      }
     });
 
     return episodeList;

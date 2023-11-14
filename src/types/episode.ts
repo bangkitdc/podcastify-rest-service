@@ -106,7 +106,7 @@ export type IEpisodeController = {
 }
 
 export type IEpisodeService = {
-  getAllEpisodes: () => Promise<IEpisode[]>
+  getAllEpisodes: (creator_id: number) => Promise<IEpisode[]>
   getEpisodeById: (episode_id: number, user_id?: number) => Promise<IEpisodeFullData>
   getEpisodesByCreatorId: (creator_id: number, page: number, limit: number) => Promise<IEpisodePagination | null> 
   createEpisode: (

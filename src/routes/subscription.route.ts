@@ -21,11 +21,13 @@ subscriptionRoute
     RequestHelper.validate(approveSubscriptionSchema),
     RequestHelper.exceptionGuard(subscriptionController.approveSubscription),
   )
+
   .get(
     '/subscription',
     AuthMiddleware.authenticateToken,
     RequestHelper.exceptionGuard(subscriptionController.getAllSubscriptions),
   )
+  
   .get(
     '/subscription/:subscriber_id',
     AuthMiddleware.authenticateToken,
