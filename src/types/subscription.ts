@@ -2,7 +2,6 @@ import { IRequestResponseHandler } from './http';
 
 export type ISubscriptionController = {
   approveSubscription: IRequestResponseHandler;
-  getAllSubscriptionBySubscriberID: IRequestResponseHandler;
   getAllSubscriptions: IRequestResponseHandler;
 };
 
