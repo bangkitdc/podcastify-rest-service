@@ -3,10 +3,10 @@
 Podcastify REST Service is an end-to-end service for Podcastify Premium App (SPA) and Podcastify App (Monolith). This service maintains Podcastify's creators and premium podcast. Furthermore, subscription status modification is also processed here with the help of Podcastify Subscription Service (Podcastify SOAP Service).
 
 ## Functionality
-1. <b>Premium Episode</b>: Creators have the ability to create, update, or delete their own premium episodes. These premium episodes are accessible to users of the Podcastify App who subscribed to the creator.
-2. <b>Subscription</b>: The admin maintains a list of users on the Podcastify App who subscribe to specific creators. The admin has the authority to approve or reject subscription requests from users. Once approved, subscribers gain access to all premium episodes produced by the subscribed creator.
-3. <b>Likes</b>: In addition to listening to premium episodes, users of the Podcastify App can express their appreciation for episodes by 'liking' them. On Podcastify Premium App, creators have visibility into the number of likes received for each premium podcast episode.
-4. <b>Comments</b>: Alongside the 'likes' feature, users can also leave comments on premium episodes. Creators can view these comments within the Podcastify Premium App.
+1. <b>Premium Episode</b> </br> Creators have the ability to create, update, or delete their own premium episodes. These premium episodes are accessible to users of the Podcastify App who subscribed to the creator.
+2. <b>Subscription</b> </br> The admin maintains a list of users on the Podcastify App who subscribe to specific creators. The admin has the authority to approve or reject subscription requests from users. Once approved, subscribers gain access to all premium episodes produced by the subscribed creator.
+3. <b>Likes</b> </br> In addition to listening to premium episodes, users of the Podcastify App can express their appreciation for episodes by 'liking' them. On Podcastify Premium App, creators have visibility into the number of likes received for each premium podcast episode.
+4. <b>Comments</b> </br> Alongside the 'likes' feature, users can also leave comments on premium episodes. Creators can view these comments within the Podcastify Premium App.
 
 ## DB Schema
 [Belom]
@@ -40,8 +40,8 @@ Please refer here [link postman] to get the full versions of the endpoints.
 | DELETE | /episode/:episode_id | Delete Episode | SPA |
 | POST | /episode/like | Like and Unlike Episode | Monolith |
 | POST | /episode/comment | Comment Episode | Monolith |
-| GET | /episode/downloadImage/:episode_id | SPA & Monolith |
-| GET | /episode/downloadAudio/:episode_id | SPA & Monolith |
+| GET | /episode/downloadImage/:episode_id | Get Static Image Files | SPA & Monolith |
+| GET | /episode/downloadAudio/:episode_id | Get Static Audio Files | SPA & Monolith |
 
 ### Subscription
 |Method| URL | Explanation | Consumer |
@@ -68,11 +68,16 @@ Please refer here [link postman] to get the full versions of the endpoints.
 ```bash
     docker-compose up -d --build
 ```
-5. To shut down the app, run
+5. Migrate and seed the DB, run
+```bash
+    npx prisma db push
+    npx prisma db seed
+```
+6. To shut down the app, run
 ```bash
     docker-compose down
 ```
-6. Ensure that the Docker Daemon is running
+7. Ensure that the Docker Daemon is running
 
 ## Tasking
 | 13521055                            | 13521072               | 13521102                   |
