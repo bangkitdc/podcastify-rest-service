@@ -10,7 +10,7 @@ Podcastify REST Service is an end-to-end service for Podcastify Premium App (SPA
 5. <b>Subscriber Visibility</b> </br> Creators have the ability to view the list of users who are subscribed to them on the Podcastify Premium App.
 
 ## DB Schema
-[Belom]
+<img src="readme/rest_erd.png" width=350>
 
 ## API Endpoint
 Please refer here [link postman] to get the full versions of the endpoints.
