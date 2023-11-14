@@ -16,7 +16,7 @@ Please refer here [link postman] to get the full versions of the endpoints.
 
 ### Auth
 |Method| URL | Explanation | Consumer |
-|:--:|:--:|:--:|:--:|
+|:--:|:--|:--|:--:|
 | POST | /login | Login & Get Access Token | SPA |
 | POST | /register | Register | SPA |
 | POST | /refresh_token | Request for New Access Token | SPA |
@@ -24,20 +24,20 @@ Please refer here [link postman] to get the full versions of the endpoints.
 
 ### User
 |Method| URL | Explanation | Consumer |
-|:--:|:--:|:--:|:--:|
+|:--:|:--|:--|:--:|
 | GET | /self | Get Logged In User | SPA |
 | GET | /creator | Get All Creators | Monolith |
 | GET | /creator/:creator_id | Get Specific Creator | Monolith |
 
 ### Episode
 |Method| URL | Explanation | Consumer |
-|:--:|:--:|:--:|:--:|
+|:--:|:--|:--|:--:|
 | GET | /episode | Get All Episodes |  |
-| GET | /episode/:episode_id | Get Specific Episode | SPA & Monolith |
-| GET | /episode/creator/:creator_id | Get All Episodes by Creator Id | SPA & Monolith |
 | POST | /episode | Create Episode | SPA |
+| GET | /episode/:episode_id | Get Specific Episode | SPA & Monolith |
 | POST | /episode/:episode_id | Update Episode | SPA |
 | DELETE | /episode/:episode_id | Delete Episode | SPA |
+| GET | /episode/creator/:creator_id | Get All Episodes by Creator Id | SPA & Monolith |
 | POST | /episode/like | Like and Unlike Episode | Monolith |
 | POST | /episode/comment | Comment Episode | Monolith |
 | GET | /episode/downloadImage/:episode_id | Get Static Image Files | SPA & Monolith |
@@ -45,7 +45,7 @@ Please refer here [link postman] to get the full versions of the endpoints.
 
 ### Subscription
 |Method| URL | Explanation | Consumer |
-|:--:  |:--:|:--:|:--:|
+|:--:|:--|:--|:--:|
 | GET | /subscription | Get All Subscriptions | SPA |
 | PATCH | /subscription | Approve Subscription | SPA |
 | GET | /subscription/:subscriber_id | Get All Subscriptions by Subscriber Id | | 
