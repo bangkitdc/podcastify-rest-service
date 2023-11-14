@@ -1,5 +1,5 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import prisma from '../models';
+import { prisma } from '../models';
 import { compare, genSalt, hash } from 'bcryptjs';
 
 import { IAuthService } from '../types/auth';
@@ -9,6 +9,7 @@ import { AuthHelper, HttpError } from '../helpers';
 import { UserService } from '.';
 import { jwtRefreshToken } from '../configs/jwt';
 import { Response } from 'express';
+import CacheHelper from '../helpers/cache.helper';
 
 class AuthService implements IAuthService {
   private userService: IUserService;
@@ -95,6 +96,9 @@ class AuthService implements IAuthService {
         password: hashedPassword
       },
     });
+
+    // Delete each key
+    await CacheHelper.deleteKeysByPattern('creators');
 
     return;
   }

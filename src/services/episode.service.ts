@@ -1,19 +1,18 @@
 import { HttpError } from "../helpers";
-import prisma from "../models";
+import { prisma } from "../models";
 import { IEpisodeService } from "../types/episode";
 import { HttpStatusCode } from "../types/http";
-import { IUserService } from "../types/user";
-import { UserService, CategoryService } from ".";
+import { CategoryService } from ".";
 import { ICategoryService } from "../types/category";
 import { IEpisodeForm } from "../types/episode";
 
 class EpisodeService implements IEpisodeService {
   private episodeModel = prisma.episode;
-  private userService: IUserService;
+  private episodeLikeModel = prisma.episodeLike;
+  private episodeCommentModel = prisma.episodeComment;
   private categoryService: ICategoryService;
 
   constructor() {
-    this.userService = new UserService();
     this.categoryService = new CategoryService();
   }
 
@@ -29,12 +28,72 @@ class EpisodeService implements IEpisodeService {
     return episodeList;
   }
 
-  async getEpisodeById(episode_id: number) {
-    return await this.episodeModel.findFirstOrThrow({
+  async getEpisodeById(episode_id: number, user_id?: number) {
+    const episode = await this.episodeModel.findFirstOrThrow({
+      where: {
+        episode_id: episode_id
+      },
+      select: {
+        episode_id: true,
+        title: true,
+        description: true,
+        user: {
+          select: {
+            first_name: true,
+            last_name: true
+          }
+        },
+        duration: true,
+        image_url: true,
+        audio_url: true,
+        creator_id: true,
+        category: { 
+          select: {
+            name: true
+          },
+        },
+        created_at:true,
+
+        episodeComments: {
+          orderBy: {
+            comment_id: 'desc'
+          },
+          select: {
+            comment_id: true,
+            username: true,
+            comment_text: true,
+            created_at: true,
+            updated_at: true
+          }
+        }
+      }
+    });
+
+    const likesCount = await this.episodeLikeModel.count({
       where: {
         episode_id: episode_id
       }
-    })
+    });
+
+    if (user_id) { // From monolith
+      const isEpisodeLikedByUser = await this.episodeLikeModel.findFirst({
+        where: {
+          episode_id: episode_id,
+          user_id: user_id
+        }
+      });
+
+      return {
+        ...episode,
+        episodeLikesCount: likesCount,
+        episodeLiked: isEpisodeLikedByUser ? true : false
+      }
+    } else { // From SPA
+      return {
+        ...episode,
+        episodeLikesCount: likesCount
+      }
+    }
   }
 
   async getEpisodesByCreatorId(creator_id: number, page: number, limit: number) {
@@ -112,7 +171,6 @@ class EpisodeService implements IEpisodeService {
     const isCategoryExists = await this.categoryService.getCategoryById(category_id);
 
     const errors: Record<string, string[]> = {};
-
 
     if (!isCategoryExists) {
       errors.category_id = ["Category Id is not exists"];
@@ -228,7 +286,7 @@ class EpisodeService implements IEpisodeService {
       where: {
         episode_id: episode_id
       }
-    })
+    });
 
     const errors: Record<string, string[]> = {};
 
@@ -249,6 +307,50 @@ class EpisodeService implements IEpisodeService {
         episode_id: episode_id
       }
     })
+  }
+
+  async likeEpisode(episode_id: number, user_id: number) {
+    const isEpisodeLikeExists = await this.episodeLikeModel.findFirstOrThrow({
+      where: {
+        episode_id: episode_id,
+        user_id: user_id
+      }
+    });
+
+    if (isEpisodeLikeExists) {
+      await this.episodeLikeModel.delete({
+        where: {
+          episode_id_user_id: {
+            episode_id: episode_id,
+            user_id: user_id
+          }
+        }
+      });
+
+      return false;
+    } else {
+      await this.episodeLikeModel.create({
+        data: {
+          episode_id: episode_id,
+          user_id: user_id
+        }
+      });
+
+      return true;
+    }
+  }
+
+  async createEpisodeComment(episode_id: number, user_id: number, username: string, comment_text: string) {
+    const comment = await this.episodeCommentModel.create({
+      data: {
+        episode_id: episode_id,
+        user_id: user_id,
+        username: username,
+        comment_text: comment_text
+      }
+    });
+
+    return comment;
   }
 }
 

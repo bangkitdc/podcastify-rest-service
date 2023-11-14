@@ -1,5 +1,5 @@
-import { IUserService } from '../types/user';
-import prisma from '../models';
+import { IUser, IUserService } from '../types/user';
+import { client, prisma } from '../models';
 import { ISubscriptionService, STATUS_MAPPING, SUBSCRIPTION_STATUS } from '../types/subscription';
 import { SubscriptionService } from '.';
 import { HttpError } from '../helpers';
@@ -13,11 +13,24 @@ class UserService implements IUserService {
   }
 
   async getUserById(user_id: number) {
-    const user = await this.userModel.findFirst({
-      where: {
-        user_id: user_id,
-      },
-    });
+    // Use redis
+    const cacheKey = `user:${user_id}`;
+    const cachedData = await client.get(cacheKey);
+
+    let user: IUser | null;
+
+    if (cachedData) {
+      user = JSON.parse(cachedData);
+    } else {
+      user = await this.userModel.findFirst({
+        where: {
+          user_id: user_id,
+        },
+      });
+
+      // Storing data in cache for 15 minutes
+      await client.setEx(cacheKey, 15 * 60, JSON.stringify(user));
+    }
 
     return user;
   }
@@ -45,22 +58,42 @@ class UserService implements IUserService {
   async getCreatorsBySubscriberId(issuer_id: number, page: number, limit: number) {
     const offset = (page - 1) * limit;
 
-    const totalData = await this.userModel.count({
-      where: {
-        role_id: 2, // except admin
-      },
-    });
-    
-    const creators = await this.userModel.findMany({
-      where: {
-        role_id: 2 // except admin
-      },
-      orderBy: {
-        user_id: 'desc'
-      },
-      take: limit,
-      skip: offset
-    });
+    // Use redis
+    const cacheKey = `creators:${page}:${limit}`;
+    const cachedData = await client.get(cacheKey);
+
+    let totalData: number, 
+        creators: IUser[];
+
+    if (cachedData) {
+      const { 
+        totalData: cachedTotalData, 
+        creators: cachedCreators 
+      } = JSON.parse(cachedData);
+
+      totalData = cachedTotalData;
+      creators = cachedCreators;
+    } else {
+      totalData = await this.userModel.count({
+        where: {
+          role_id: 2, // except admin
+        },
+      });
+      
+      creators = await this.userModel.findMany({
+        where: {
+          role_id: 2 // except admin
+        },
+        orderBy: {
+          user_id: 'desc'
+        },
+        take: limit,
+        skip: offset
+      });
+
+      // Storing data in cache for 1 hour
+      await client.setEx(cacheKey, 3600, JSON.stringify({ totalData, creators }));
+    }
 
     const creatorsStatus = await this.subscriptionService.getAllSubscriptionBySubscriberID(
       issuer_id, 
@@ -121,8 +154,6 @@ class UserService implements IUserService {
       creator_id, 
       subscriber_id
     );
-
-    console.log(STATUS_MAPPING[creatorStatus])
     
     if (!creatorStatus) {
       throw new HttpError(HttpStatusCode.NotFound, "Data not found");

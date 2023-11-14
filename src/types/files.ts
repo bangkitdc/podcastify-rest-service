@@ -4,17 +4,11 @@ export type FileType = {
 
 export const audioExtensions: FileType = {
   'audio/mpeg': '.mp3',
-  'audio/aac': '.aac',
-  'audio/ogg': '.ogg',
-  'audio/wav': '.wav',
-  'audio/flac': '.flac',
-  'audio/opus': '.opus',
 };
 
 export const imageExtensions: FileType = {
   'image/jpeg': '.jpeg',
   'image/jpg': '.jpg',
-  'image/webp': '.webp',
   'image/png': '.png',
 };
 

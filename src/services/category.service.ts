@@ -1,17 +1,23 @@
-import prisma from "../models";
+import { prisma } from "../models";
 import { ICategoryService } from "../types/category";
 
 class CategoryService implements ICategoryService {
   private categoryModel = prisma.category;
 
+  async getCategories() {
+    const category = await this.categoryModel.findMany()
+
+    return category;
+  }
+
   async getCategoryById(category_id: number) {
-    const user = await this.categoryModel.findFirst({
+    const category = await this.categoryModel.findFirst({
       where: {
         category_id: category_id,
       },
     });
 
-    return user;
+    return category;
   }
 }
 

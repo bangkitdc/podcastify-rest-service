@@ -20,6 +20,16 @@ class ResponseHelper {
     return res.status(statusCode).json(responseObj);
   }
 
+  static responseFileSuccess(
+    res: Response,
+    statusCode: HttpStatusCode,
+    message: string,
+    filePath: string,
+  ) {
+
+    return res.status(statusCode).download("./src/storage/" + filePath)
+  }
+
   static responseError(
     res: Response,
     statusCode: HttpStatusCode,
