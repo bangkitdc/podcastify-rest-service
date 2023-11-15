@@ -2,18 +2,21 @@ import { HttpError } from "../helpers";
 import { prisma } from "../models";
 import { IEpisodeService } from "../types/episode";
 import { HttpStatusCode } from "../types/http";
-import { CategoryService } from ".";
+import { CategoryService, SubscriptionService } from ".";
 import { ICategoryService } from "../types/category";
 import { IEpisodeForm } from "../types/episode";
+import { ISubscriptionService, SUBSCRIPTION_STATUS } from "../types/subscription";
 
 class EpisodeService implements IEpisodeService {
   private episodeModel = prisma.episode;
   private episodeLikeModel = prisma.episodeLike;
   private episodeCommentModel = prisma.episodeComment;
   private categoryService: ICategoryService;
+  private subscriptionService: ISubscriptionService;
 
   constructor() {
     this.categoryService = new CategoryService();
+    this.subscriptionService = new SubscriptionService();
   }
 
   async getAllEpisodes(creator_id: number) {
@@ -48,7 +51,7 @@ class EpisodeService implements IEpisodeService {
         image_url: true,
         audio_url: true,
         creator_id: true,
-        category: { 
+        category: {
           select: {
             name: true
           },
@@ -69,6 +72,18 @@ class EpisodeService implements IEpisodeService {
         }
       }
     });
+
+    // Check status first
+    if (user_id) { // From Monolith
+      const creatorStatus = await this.subscriptionService.getStatus(
+        episode.creator_id, 
+        user_id
+      );
+
+      if (creatorStatus !== SUBSCRIPTION_STATUS.ACCEPTED) {
+        throw new HttpError(HttpStatusCode.Unauthorized, "User's not subscribed to the creator");
+      }
+    }
 
     const likesCount = await this.episodeLikeModel.count({
       where: {
@@ -148,7 +163,7 @@ class EpisodeService implements IEpisodeService {
     }
 
     if (page > totalPage) {
-      throw new HttpError(HttpStatusCode.NotFound, "Requested page not found")
+      throw new HttpError(HttpStatusCode.NotFound, "Requested page not found");
     }
 
     return {
@@ -311,7 +326,7 @@ class EpisodeService implements IEpisodeService {
   }
 
   async likeEpisode(episode_id: number, user_id: number) {
-    const isEpisodeLikeExists = await this.episodeLikeModel.findFirstOrThrow({
+    const isEpisodeLikeExists = await this.episodeLikeModel.findFirst({
       where: {
         episode_id: episode_id,
         user_id: user_id

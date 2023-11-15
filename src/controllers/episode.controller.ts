@@ -140,7 +140,7 @@ class EpisodeController implements IEpisodeController {
 
     const episodeData: IEpisodeForm = req.body;
 
-    const creator_id = res.locals.user.user_id;
+    const creator_id = parseInt(res.locals.user.user_id);
 
     let image_url = '';
     let audio_url = '';

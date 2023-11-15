@@ -57,12 +57,16 @@ const createEpisodeSchema = z.object({
     ),
 
     category_id: z
-      .string({
-        required_error: 'Category Id is required',
-      })
-      .min(1, {
-        message: 'Category Id is required',
-      }),
+      .string().refine((value) => {
+        const parsedValue = Number(value);
+        return !isNaN(parsedValue) && parsedValue > 0;
+      }, { message: "Invalid Category Id" }).optional(),
+
+    duration: z
+      .string().refine((value) => {
+        const parsedValue = Number(value);
+        return !isNaN(parsedValue) && parsedValue > 0;
+      }, { message: "Invalid Duration" }).optional(),
   }),
 });
 
@@ -93,12 +97,16 @@ const updateEpisodeSchema = z.object({
       }),
 
     category_id: z
-      .number({
-        required_error: 'Category Id is required',
-      })
-      .min(1, {
-        message: 'Category Id is required',
-      }),
+      .string().refine((value) => {
+        const parsedValue = Number(value);
+        return !isNaN(parsedValue) && parsedValue > 0;
+      }, { message: "Invalid Category Id" }).optional(),
+    
+    duration: z
+      .string().refine((value) => {
+        const parsedValue = Number(value);
+        return !isNaN(parsedValue) && parsedValue > 0;
+      }, { message: "Invalid Duration" }).optional(),
   }),
 });
 
