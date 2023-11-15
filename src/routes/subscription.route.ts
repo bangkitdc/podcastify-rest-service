@@ -2,12 +2,13 @@ import { Router } from 'express';
 
 import { RequestHelper } from '../helpers';
 import { approveSubscriptionSchema } from '../dto';
-import { SubscriptionService } from '../services';
+import { SubscriptionService, UserService } from '../services';
 import { SubscriptionController } from '../controllers';
 import { AuthMiddleware } from '../middlewares';
 
 const subscriptionService = new SubscriptionService();
-const subscriptionController = new SubscriptionController(subscriptionService);
+const userService = new UserService();
+const subscriptionController = new SubscriptionController(subscriptionService, userService);
 
 const subscriptionRoute = Router();
 
