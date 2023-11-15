@@ -6,10 +6,12 @@ import {
   SUBSCRIPTION_STATUS,
 } from '../types/subscription';
 import { HttpStatusCode } from '../types/http';
+import { IUserService, UserRoleId } from '../types/user';
 
 class SubscriptionController implements ISubscriptionController {
-  constructor(private subscriptionService: ISubscriptionService) {
+  constructor(private subscriptionService: ISubscriptionService, private userService: IUserService) {
     this.approveSubscription = this.approveSubscription.bind(this);
+    this.getAllSubscriptions = this.getAllSubscriptions.bind(this);
   }
 
   approveSubscription = async (req: Request, res: Response) => {
@@ -35,20 +37,12 @@ class SubscriptionController implements ISubscriptionController {
   };
 
   getAllSubscriptions = async (req: Request, res: Response) => {
-    const { creator_id } = req.query;
+    const user_id = res.locals.user.user_id;
 
-    // If there are query parameters other than creator_id, throw an error
-    const queryParams = Object.keys(req.query);
-    if (queryParams.some((param) => !['creator_id'].includes(param))) {
-      return ResponseHelper.responseError(
-        res,
-        HttpStatusCode.BadRequest,
-        'Invalid query parameter',
-      );
-    }
-    if (creator_id) {
+    const is_creator = (await this.userService.getUserById(user_id))?.role_id === UserRoleId.User;
+    if (is_creator) {
       const result = await this.subscriptionService.getSubscribersByCreatorID(
-        Number(creator_id),
+        Number(user_id),
         SUBSCRIPTION_STATUS.ACCEPTED
       );
       return ResponseHelper.responseSuccess(
