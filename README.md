@@ -48,7 +48,6 @@ Please refer here [link postman] to get the full versions of the endpoints.
 |Method| URL | Explanation | Consumer |
 |:--:|:--|:--|:--:|
 | GET | /subscription | Get All Subscriptions | SPA |
-| GET | /subscription?creator_id= | Get All Subscriptions by Creator ID | SPA |
 | PATCH | /subscription | Approve Subscription | SPA | 
 
 ## Tech Stacks  
