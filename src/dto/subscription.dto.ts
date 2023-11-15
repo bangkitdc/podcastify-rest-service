@@ -29,22 +29,4 @@ const approveSubscriptionSchema = z.object({
   }),
 });
 
-const getAllSubscriptionBySubscriberIdSchema = z.object({
-  params: z.object({
-    subscriber_id: z
-      .string()
-      .refine((value) => !isNaN(Number(value)), {
-        message: 'Params Subscriber ID must be a number',
-      })
-      .transform(Number),
-  }),
-  query: z.object({
-    status: z
-      .enum(['ALL', 'PENDING', 'ACCEPTED', 'REJECTED'])
-      .refine((value) => value !== undefined, {
-        message: 'Status must be one of ALL, PENDING, ACCEPTED or REJECTED',
-      }),
-  }),
-});
-
-export { approveSubscriptionSchema, getAllSubscriptionBySubscriberIdSchema };
+export { approveSubscriptionSchema };
