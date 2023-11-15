@@ -50,8 +50,10 @@ const uploadFile = multer({storage: storage, fileFilter: fileFilter, limits: {fi
 episodeRoute
   .get(
     '/episode',
+    AuthMiddleware.authenticateToken,
     RequestHelper.exceptionGuard(episodeController.getAllEpisodes),
   )
+
   .get(
     '/episode/:episode_id',
     (req: Request, res: Response, next: NextFunction) => {
@@ -59,18 +61,29 @@ episodeRoute
 
       if (header == process.env.APP_API_KEY) { // From Monolith
         AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE)(req, res, next);
-      } else {
+      } else { // From SPA
         AuthMiddleware.authenticateToken(req, res, next);
       }
     },
     RequestHelper.validate(getEpisodeByIdSchema),
     RequestHelper.exceptionGuard(episodeController.getEpisodeById),
   )
+
   .get(
     '/episode/creator/:creator_id',
+    (req: Request, res: Response, next: NextFunction) => {
+      const header = req.headers['x-api-key'];
+
+      if (header == process.env.APP_API_KEY) { // From Monolith
+        AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE)(req, res, next);
+      } else { // From SPA
+        AuthMiddleware.authenticateToken(req, res, next);
+      }
+    },
     RequestHelper.validate(getEpisodesByCreatorIdSchema),
     RequestHelper.exceptionGuard(episodeController.getEpisodesByCreatorId)
   )
+
   .post( 
     '/episode',
     AuthMiddleware.authenticateToken,
@@ -101,6 +114,7 @@ episodeRoute
     RequestHelper.validate(updateEpisodeSchema),
     RequestHelper.exceptionGuard(episodeController.updateEpisode),
   )
+
   .delete(
     '/episode/:episode_id',
     AuthMiddleware.authenticateToken,
@@ -109,11 +123,30 @@ episodeRoute
 
   .get(
     '/episode/downloadImage/:episode_id',
+    (req: Request, res: Response, next: NextFunction) => {
+      const header = req.headers['x-api-key'];
+
+      if (header == process.env.APP_API_KEY) { // From Monolith
+        AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE)(req, res, next);
+      } else { // From SPA
+        AuthMiddleware.authenticateToken(req, res, next);
+      }
+    },
     RequestHelper.validate(getEpisodeByIdSchema),
     RequestHelper.exceptionGuard(episodeController.getEpisodeImageFileById),
   )
+  
   .get(
     '/episode/downloadAudio/:episode_id',
+    (req: Request, res: Response, next: NextFunction) => {
+      const header = req.headers['x-api-key'];
+
+      if (header == process.env.APP_API_KEY) { // From Monolith
+        AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE)(req, res, next);
+      } else { // From SPA
+        AuthMiddleware.authenticateToken(req, res, next);
+      }
+    },
     RequestHelper.validate(getEpisodeByIdSchema),
     RequestHelper.exceptionGuard(episodeController.getEpisodeAudioFileById),
   )

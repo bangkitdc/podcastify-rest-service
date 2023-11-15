@@ -17,12 +17,14 @@ userRoute
     AuthMiddleware.authenticateToken, 
     RequestHelper.exceptionGuard(userController.getSelf)
   )
+
   .get(
     '/creator',
     AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE),
     RequestHelper.validate(getCreatorsBySubscriberIdSchema),
     RequestHelper.exceptionGuard(userController.getCreatorsBySubscriberId)
   )
+  
   .get(
     '/creator/:creator_id',
     AuthMiddleware.authenticateApiKey(ApiService.APP_SERVICE),

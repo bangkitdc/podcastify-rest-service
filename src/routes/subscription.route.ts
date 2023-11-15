@@ -18,6 +18,7 @@ subscriptionRoute
     RequestHelper.validate(approveSubscriptionSchema),
     RequestHelper.exceptionGuard(subscriptionController.approveSubscription),
   )
+
   .get(
     '/subscription',
     AuthMiddleware.authenticateToken,

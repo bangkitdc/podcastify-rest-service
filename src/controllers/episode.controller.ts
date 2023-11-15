@@ -23,7 +23,7 @@ class EpisodeController implements IEpisodeController {
   }
 
   async getAllEpisodes(req: Request, res: Response) {
-    const data = await this.episodeService.getAllEpisodes();
+    const data = await this.episodeService.getAllEpisodes(parseInt(res.locals.user.user_id));
 
     return ResponseHelper.responseSuccess(
       res,
@@ -140,7 +140,7 @@ class EpisodeController implements IEpisodeController {
 
     const episodeData: IEpisodeForm = req.body;
 
-    const creator_id = res.locals.user.user_id;
+    const creator_id = parseInt(res.locals.user.user_id);
 
     let image_url = '';
     let audio_url = '';
