@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import { HttpStatusCode, IApiBaseResponseError, IApiBaseResponseSuccess } from '../types/http';
+import { existsSync } from 'fs';
 
 class ResponseHelper {
   static responseSuccess(
@@ -24,10 +25,14 @@ class ResponseHelper {
     res: Response,
     statusCode: HttpStatusCode,
     message: string,
-    filePath: string,
+    filePath: string | null | undefined,
   ) {
 
-    return res.status(statusCode).download("./src/storage/" + filePath)
+    if(filePath && existsSync("./src/storage/" + filePath)){
+      return res.status(statusCode).download("./src/storage/" + filePath)
+    } else {
+      return res.status(statusCode).download("./src/public/avatar-template.png")
+    }
   }
 
   static responseError(

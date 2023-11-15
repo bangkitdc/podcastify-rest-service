@@ -56,14 +56,14 @@ class EpisodeController implements IEpisodeController {
       parseInt(episode_id),
     );
     
-    if(episode.image_url) {
-      return ResponseHelper.responseFileSuccess(
-        res,
-        HttpStatusCode.Ok,
-        'Operation success',
-        episode.image_url,
-      );
-    }
+    // if(episode.image_url) {
+    return ResponseHelper.responseFileSuccess(
+      res,
+      HttpStatusCode.Ok,
+      'Operation success',
+      episode.image_url,
+    );
+    // }
   }
 
   async getEpisodeAudioFileById(req: Request, res: Response) {
