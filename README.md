@@ -13,8 +13,6 @@ Podcastify REST Service is an end-to-end service for Podcastify Premium App (SPA
 <img src="readme/rest_erd.png" width=350>
 
 ## API Endpoint
-Please refer here [link postman] to get the full versions of the endpoints.
-
 ### Auth
 |Method| URL | Explanation | Consumer |
 |:--:|:--|:--|:--:|
